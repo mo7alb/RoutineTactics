@@ -1,11 +1,16 @@
 import express from "express";
+import { prisma } from "./utils/prisma";
 
 // import types
 import { Express, Request, Response } from "express";
 
 const app: Express = express();
 
-app.get("/", (req: Request, res: Response) => res.send("Index route"));
+app.get("/", async (req: Request, res: Response) => {
+	const users = await prisma.user.findMany();
+
+	res.status(200).json(users);
+});
 
 const PORT = 3000;
 
