@@ -1,17 +1,19 @@
-import express from "express";
-import { prisma } from "./utils/prisma";
+// import packages and types
+import express, { Express } from "express";
 
-// import types
-import { Express, Request, Response } from "express";
+// import routes
+import userRouter from "./routes/user";
+import boardRouter from "./routes/board";
+import listRouter from "./routes/list";
+import taskRouter from "./routes/task";
 
 const app: Express = express();
 
-app.get("/", async (req: Request, res: Response) => {
-	const users = await prisma.user.findMany();
+app.use("/api/user", userRouter);
+app.use("/api/board", boardRouter);
+app.use("/api/list", listRouter);
+app.use("/api/task", taskRouter);
 
-	res.status(200).json(users);
-});
-
+// listen for requests
 const PORT = 3000;
-
 app.listen(PORT, () => console.log(`app running on port ${PORT}`));

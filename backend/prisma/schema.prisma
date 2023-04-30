@@ -15,13 +15,14 @@ model User {
 }
 
 model Board {
-  id    Int    @id @default(autoincrement())
-  Users User[]
-  List  List[]
+  id     String @id @default(uuid())
+  Users  User[]
+  List   List[]
+  userId String
 }
 
 model List {
-  id      Int   @id @default(autoincrement())
-  board   Board @relation(fields: [boardId], references: [id])
-  boardId Int
+  id      String @id @default(uuid())
+  board   Board  @relation(fields: [boardId], references: [id])
+  boardId String
 }
