@@ -7,9 +7,9 @@ const router = express.Router();
 router.get("/:id", GET);
 
 // register new user
-router.get("/", POST);
+router.post("/", POST);
 
 // delete user account
-router.get("/:id", DELETE);
+router.delete("/:id", DELETE);
 
 export default router;

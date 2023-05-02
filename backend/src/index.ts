@@ -17,3 +17,5 @@ app.use("/api/task", taskRouter);
 // listen for requests
 const PORT = 3000;
 app.listen(PORT, () => console.log(`app running on port ${PORT}`));
+
+export default app;

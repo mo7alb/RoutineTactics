@@ -25,4 +25,15 @@ model List {
   id      String @id @default(uuid())
   board   Board  @relation(fields: [boardId], references: [id])
   boardId String
+  Task    Task[]
+}
+
+model Task {
+  id        String    @id @default(uuid())
+  list      List      @relation(fields: [id], references: [id])
+  completed Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  due       DateTime?
+  title     String
+  notes     String?
 }
