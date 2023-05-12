@@ -21,7 +21,7 @@ interface IUser {
 
 let user: IUser;
 
-describe("GET /user", () => {
+describe("GET /api/user", () => {
 	before(async () => {
 		await prisma.$connect();
 		await prisma.user.deleteMany();
@@ -72,6 +72,38 @@ describe("GET /user", () => {
 		chai
 			.request(app)
 			.get("/api/user/123")
+			.end((err, res) => {
+				expect(res).to.have.status(400);
+				done();
+			});
+	});
+});
+
+describe("POST /api/user", () => {
+	before(async () => {
+		await prisma.$connect();
+		await prisma.user.deleteMany();
+	});
+
+	after(async () => {
+		await prisma.$disconnect();
+	});
+
+	it("Should return status of 201 upon good request", done => {
+		chai
+			.request(app)
+			.post("/api/user")
+			.send({ something: "good" })
+			.end((err, res) => {
+				expect(res).to.have.status(201);
+				done();
+			});
+	});
+
+	it("Should return a status of 400 when no body is passed through the request", done => {
+		chai
+			.request(app)
+			.post("/api/user")
 			.end((err, res) => {
 				expect(res).to.have.status(400);
 				done();

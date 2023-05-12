@@ -1,5 +1,7 @@
 {
 	"extensions": ["ts"],
 	"spec": ["**/*.spec.*"],
-	"node-option": ["loader=ts-node/esm"]
+	"node-option": ["loader=ts-node/esm"],
+	"recursive": true,
+	"exit": true
 }

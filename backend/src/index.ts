@@ -3,14 +3,14 @@ import express, { Express } from "express";
 
 // import routes
 import userRouter from "./routes/user";
-import boardRouter from "./routes/board";
+import projectRouter from "./routes/project";
 import listRouter from "./routes/list";
 import taskRouter from "./routes/task";
 
 const app: Express = express();
 
 app.use("/api/user", userRouter);
-app.use("/api/board", boardRouter);
+app.use("/api/project", projectRouter);
 app.use("/api/list", listRouter);
 app.use("/api/task", taskRouter);
 

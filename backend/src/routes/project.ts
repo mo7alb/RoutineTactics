@@ -1,5 +1,5 @@
 import express from "express";
-import { GET, POST, PUT, DELETE } from "../controllers/board";
+import { GET, POST, PUT, DELETE } from "../controllers/project";
 
 const router = express.Router();
 

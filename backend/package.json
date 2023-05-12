@@ -26,7 +26,7 @@
 		"test": "mocha './test/**/*.ts'",
 		"dev": "npx tsc --watch & node --watch dist/index.js",
 		"startDb": "docker-compose up -d && npx prisma migrate dev --name init && npx prisma db seed",
-		"stopDb": "docker-compse down"
+		"stopDb": "docker-compose down"
 	},
 	"prisma": {
 		"seed": "ts-node prisma/seed.ts"
