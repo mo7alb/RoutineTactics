@@ -12,28 +12,31 @@ model User {
   email    String    @unique
   password String
   Projects Project[]
+  Comment  Comment[]
 }
 
 model Project {
   id     String @id @default(uuid())
-  Users  User[]
-  List   List[]
   userId String
-}
+  admin  User   @relation(fields: [userId], references: [id])
 
-model List {
-  id        String  @id @default(uuid())
-  Project   Project @relation(fields: [ProjectId], references: [id])
-  ProjectId String
-  Task      Task[]
+  createdAt DateTime  @default(now())
+  dueDate   DateTime?
+
+  description String
+  team        User[]
 }
 
 model Task {
-  id        String    @id @default(uuid())
-  list      List      @relation(fields: [id], references: [id])
-  completed Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  due       DateTime?
-  title     String
-  notes     String?
+  id          String   @id @default(uuid())
+  description String
+  createdAt   DateTime @default(now())
+  dueDate     DateTime
+}
+
+model Comment {
+  id     String @id @default(uuid())
+  text   String
+  admin  User   @relation(fields: [userId], references: [id])
+  userId String
 }
