@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  fullName       String          @db.VarChar(255)
+  email          String          @unique @db.VarChar(255)
+  username       String          @unique @db.VarChar(255)
+  password       String
+  Comment        Comment[]
+  ProjectMembers ProjectMember[]
+  Projects       Project[]
+  created        Task[]          @relation(name: "creator")
+  assigned       Task[]
+
+  @@map("users")
+}
+
+model Project {
+  id             String          @id @default(uuid())
+  name           String
+  description    String
+  createdAt      DateTime        @default(now())
+  dueDate        DateTime?
+  userId         String
+  categories     String[]
+  admin          User            @relation(fields: [userId], references: [id])
+  ProjectMembers ProjectMember[]
+  Task           Task[]
+
+  @@map("projects")
+}
+
+// create a table for Users and Project combination called members
+model ProjectMember {
+  id        String  @id @default(uuid())
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  member    User    @relation(fields: [userId], references: [id])
+  userId    String
+}
+
+model Task {
+  // task details
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  labels      String[]
+  createdAt   DateTime  @default(now())
+  dueDate     DateTime?
+
+  // project to which the task belongs to
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  // list of comments the task has
+  Comment Comment[]
+
+  // User who created the task
+  createdById  String
+  createdBy    User    @relation(fields: [createdById], references: [id], name: "creator")
+  // User that the task is assigned to
+  assignedToId String?
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id])
+
+  @@map("tasks")
+}
+
+model Comment {
+  id        String @id @default(uuid())
+  comment   String @db.VarChar()
+  task      Task   @relation(fields: [taskId], references: [id])
+  taskId    String
+  commenter User   @relation(fields: [userId], references: [id])
+  userId    String
+
+  @@map("comments")
+}
