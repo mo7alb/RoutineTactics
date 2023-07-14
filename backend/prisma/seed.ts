@@ -70,7 +70,7 @@ async function main() {
 
 	if (project1 == null || project2 == null || project3 == null) return;
 
-	const members = await prisma.projectMembers.createMany({
+	const members = await prisma.projectMember.createMany({
 		data: [
 			{
 				projectId: project1.id,
@@ -105,6 +105,7 @@ async function main() {
 			description:
 				"Create a type of component that would render on the server and repond with html to client",
 			projectId: project2.id,
+			createdById: user2.id,
 		},
 	});
 	const comments = await prisma.comment.createMany({

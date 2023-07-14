@@ -8,30 +8,37 @@ datasource db {
 }
 
 model User {
-  id             String           @id @default(uuid())
-  fullName       String           @db.VarChar(255)
-  email          String           @unique @db.VarChar(255)
-  username       String           @unique @db.VarChar(255)
+  id             String          @id @default(uuid())
+  fullName       String          @db.VarChar(255)
+  email          String          @unique @db.VarChar(255)
+  username       String          @unique @db.VarChar(255)
   password       String
   Comment        Comment[]
-  ProjectMembers ProjectMembers[]
+  ProjectMembers ProjectMember[]
   Projects       Project[]
+  created        Task[]          @relation(name: "creator")
+  assigned       Task[]
+
+  @@map("users")
 }
 
 model Project {
-  id             String           @id @default(uuid())
+  id             String          @id @default(uuid())
   name           String
   description    String
-  createdAt      DateTime         @default(now())
+  createdAt      DateTime        @default(now())
   dueDate        DateTime?
   userId         String
-  admin          User             @relation(fields: [userId], references: [id])
-  ProjectMembers ProjectMembers[]
+  categories     String[]
+  admin          User            @relation(fields: [userId], references: [id])
+  ProjectMembers ProjectMember[]
   Task           Task[]
+
+  @@map("projects")
 }
 
 // create a table for Users and Project combination called members
-model ProjectMembers {
+model ProjectMember {
   id        String  @id @default(uuid())
   project   Project @relation(fields: [projectId], references: [id])
   projectId String
@@ -40,15 +47,29 @@ model ProjectMembers {
 }
 
 model Task {
+  // task details
   id          String    @id @default(uuid())
   name        String
   description String?
-  categories  String[]
+  labels      String[]
   createdAt   DateTime  @default(now())
   dueDate     DateTime?
-  project     Project   @relation(fields: [projectId], references: [id])
-  Comment     Comment[]
-  projectId   String
+
+  // project to which the task belongs to
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  // list of comments the task has
+  Comment Comment[]
+
+  // User who created the task
+  createdById  String
+  createdBy    User    @relation(fields: [createdById], references: [id], name: "creator")
+  // User that the task is assigned to
+  assignedToId String?
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id])
+
+  @@map("tasks")
 }
 
 model Comment {
@@ -58,4 +79,6 @@ model Comment {
   taskId    String
   commenter User   @relation(fields: [userId], references: [id])
   userId    String
+
+  @@map("comments")
 }
