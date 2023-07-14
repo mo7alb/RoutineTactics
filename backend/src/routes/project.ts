@@ -4,7 +4,7 @@ import { GET, POST, PUT, DELETE } from "../controllers/project";
 const router = express.Router();
 
 // get board details
-router.get("/:id", GET);
+router.get("/", GET);
 
 // add new board
 router.post("/", POST);
