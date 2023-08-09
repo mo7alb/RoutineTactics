@@ -1,17 +1,15 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "../screens/Home";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 
 const Stack = createNativeStackNavigator();
 
-export default function Navigator() {
+export default function AppStack() {
 	return (
 		<Stack.Navigator>
-			<Stack.Screen name="Home" component={Home} />
-			<Stack.Screen name="Login" component={Login} />
-			<Stack.Screen name="Register" component={Register} />
+			<Stack.Screen name="Login Screen" component={Login} />
+			<Stack.Screen name="Register Screen" component={Register} />
 		</Stack.Navigator>
 	);
 }
