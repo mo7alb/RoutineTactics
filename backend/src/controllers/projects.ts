@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 
+async function createProject(request: Request, response: Response) {}
+
 /**
  * Things to do
  * ------------
@@ -32,4 +34,4 @@ async function updateProject(request: Request, response: Response) {}
 
 async function deleteProject(request: Request, response: Response) {}
 
-export { getProjects, getProject, updateProject, deleteProject };
+export { createProject, getProjects, getProject, updateProject, deleteProject };
