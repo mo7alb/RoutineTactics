@@ -1,11 +1,12 @@
 import React from "react";
-import { Button, KeyboardAvoidingView, View, Text } from "react-native";
+import { Button, KeyboardAvoidingView, Text, View } from "react-native";
 import Input from "../UI/Input";
 import { errorStyles } from "../../styles/error";
 import { useAuth } from "../../hooks/useAuth";
 
-export default function LoginForm() {
-	const { errors, control, signIn } = useAuth();
+export default function RegisterForm() {
+	const { errors, control, signUp } = useAuth();
+
 	return (
 		<>
 			<View style={errorStyles.errorContainer}>
@@ -50,12 +51,7 @@ export default function LoginForm() {
 					error={errors.password != null}
 				/>
 
-				<Button
-					title="Login"
-					color="#841584"
-					accessibilityLabel="Log into routine tactics"
-					onPress={signIn}
-				/>
+				<Button title="Register" onPress={signUp} />
 			</KeyboardAvoidingView>
 		</>
 	);
