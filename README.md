@@ -1,42 +1,44 @@
 # Routine Tactics
 
-An cross platform task managing app for developers
+## Overview
 
----
+Welcome to Routine Tactics monorepo. Routine Tactics is a cross platform task managing app for software engineers. This monorepo consists of two applications, a backend API and a mobile UI with each in its particular directory. The project makes use of yarn workspaces to combine the backend and the frontend mobile ui.
 
-### Getting started
+## Prerequisites
 
----
+1. Node JS (v18 or higher)
+2. Docker (for a test database)
+3. Yarn
+4. A firebase project
 
--  Install all packages
-   Install all the packages using yarn in the root directory
+## Getting started
+
+1. Clone repository to local machine.
+
+1. Install all packages
+   In the terminal or bash, run the following script to install all dependencies
 
    ```bash
    yarn
    ```
 
--  Update metro-config.js
-   In the root directory navigate to node_modules/expo/metro-config.js and paste the code given below
+1. Create a firebase project
 
-   ```js
-   const { getDefaultConfig } = require("expo/metro-config");
-   const path = require("path");
+   -  navigate to [firebase](https://firebase.google.com/)
 
-   // Find the project and workspace directories
-   const projectRoot = __dirname;
-   const workspaceRoot = path.resolve(projectRoot, "../..");
+   -  create a new project
 
-   const config = getDefaultConfig(projectRoot);
+   -  Within the project create a new web app
 
-   // 1. Watch all files within the monorepo
-   config.watchFolders = [workspaceRoot];
-   // 2. Let Metro know where to resolve packages and in what order
-   config.resolver.nodeModulesPaths = [
-   	path.resolve(projectRoot, "node_modules"),
-   	path.resolve(workspaceRoot, "node_modules"),
-   ];
-   // 3. Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
-   config.resolver.disableHierarchicalLookup = true;
+1. follow readme files within web and mobile directors for further instructions
 
-   module.exports = config;
-   ```
+## Project Structure
+
+The monorepo consists of two important files,
+
+-  /mobile : A react native mobile application
+-  /backend : A Node and Express backend API
+
+## License
+
+This project operates under the MIT License. Refer to the LICENSE file for comprehensive details.

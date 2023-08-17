@@ -24,7 +24,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"start": "node .",
+		"start": "node dist/src/index",
 		"test": "mocha --require ts-node/register -r dotenv/config --no-cache",
 		"test:watch": "mocha --watch --watch-files",
 		"dev": "npx tsc --watch & node --watch dist/src/index.js",
