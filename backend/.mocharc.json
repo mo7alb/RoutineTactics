@@ -1,6 +1,6 @@
 {
 	"extensions": ["ts"],
-	"spec": ["**/*.spec.*"],
+	"spec": ["**/*.test.ts", "src/**/**/*.test.ts"],
 	"node-option": ["loader=ts-node/esm"],
 	"recursive": true,
 	"exit": true

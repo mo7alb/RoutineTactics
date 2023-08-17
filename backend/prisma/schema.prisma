@@ -25,7 +25,7 @@ model User {
 model Project {
   id             String          @id @default(uuid())
   name           String
-  description    String
+  description    String?
   createdAt      DateTime        @default(now())
   dueDate        DateTime?
   userId         String
