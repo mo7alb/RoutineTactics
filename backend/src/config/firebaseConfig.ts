@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
@@ -12,3 +13,13 @@ const config = {
 
 const app = initializeApp(config);
 export const Auth = getAuth(app);
+=======
+import admin, { ServiceAccount } from "firebase-admin";
+import serviceAccount from "../../firebaseConfig.json";
+
+admin.initializeApp({
+	credential: admin.credential.cert(serviceAccount as ServiceAccount),
+});
+
+export default admin;
+>>>>>>> 8a0c1b9 (Added authentication verification to the backend)
