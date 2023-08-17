@@ -8,6 +8,7 @@
 		"@prisma/client": "^5.1.1",
 		"chai": "^4.3.7",
 		"express": "^4.18.2",
+		"firebase-admin": "^11.10.1",
 		"mocha": "^10.2.0"
 	},
 	"devDependencies": {
@@ -26,7 +27,7 @@
 		"start": "node .",
 		"test": "mocha --require ts-node/register -r dotenv/config --no-cache",
 		"test:watch": "mocha --watch --watch-files",
-		"dev": "npx tsc --watch & node --watch dist/index.js",
+		"dev": "npx tsc --watch & node --watch dist/src/index.js",
 		"startDb": "docker-compose up -d",
 		"migrateDb": "npx prisma migrate dev --name init",
 		"seedDb": "npx prisma db seed",
