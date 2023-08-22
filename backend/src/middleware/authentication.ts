@@ -12,7 +12,8 @@ class Authentication {
 		token = token.split(" ")[1];
 		try {
 			const decodedValue = await admin.auth().verifyIdToken(token);
-			if (!decodedValue) return response.sendStatus(401);
+
+      if (!decodedValue) return response.sendStatus(401);
 
 			// @ts-ignore
 			request.user = decodedValue;
