@@ -2,6 +2,7 @@
 import { Request, Response } from "express";
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import admin from "../config/firebaseAdminConfig";
 =======
 import admin from "../config/firebaseConfig";
@@ -9,6 +10,9 @@ import admin from "../config/firebaseConfig";
 =======
 import admin from "../config/firebaseAdminConfig";
 >>>>>>> 7428574 (Code refactor and project feature)
+=======
+import admin from "../config/firebaseAdminConfig";
+>>>>>>> main
 
 class Authentication {
 	async decodeToken(request: Request, response: Response, next: Function) {
@@ -23,16 +27,21 @@ class Authentication {
 <<<<<<< HEAD
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       if (!decodedValue) return response.sendStatus(401);
 =======
 =======
 >>>>>>> 7428574 (Code refactor and project feature)
 			if (!decodedValue) return response.sendStatus(401);
 >>>>>>> 8a0c1b9 (Added authentication verification to the backend)
+=======
+      if (!decodedValue) return response.sendStatus(401);
+>>>>>>> main
 
 			// @ts-ignore
 			request.user = decodedValue;
 			return next();
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		} catch {
@@ -42,6 +51,9 @@ class Authentication {
 =======
 		} catch {
 >>>>>>> 7428574 (Code refactor and project feature)
+=======
+		} catch {
+>>>>>>> main
 			return response.sendStatus(500);
 		}
 	}
