@@ -10,10 +10,7 @@ const app: Express = express();
 
 app.use(express.json());
 app.use(Authentication.decodeToken);
-<<<<<<< HEAD
 
-=======
->>>>>>> 8a0c1b9 (Added authentication verification to the backend)
 // app.use("/api/users", userRouter);
 app.use("/api/projects", projectRouter);
 // app.use("/api/tasks", taskRouter);
