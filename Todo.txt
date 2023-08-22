@@ -1,0 +1,8 @@
+Create a object with three properties
+- name
+- uid
+- email
+
+use admin.auth().createCustomToken to create a custom firebase jwt token
+
+use it for testing purposes

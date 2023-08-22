@@ -1,6 +1,6 @@
 // import admin from "firebase-admin";
 import { Request, Response } from "express";
-import admin from "../config/firebaseConfig";
+import admin from "../config/firebaseAdminConfig";
 
 class Authentication {
 	async decodeToken(request: Request, response: Response, next: Function) {
@@ -12,13 +12,12 @@ class Authentication {
 		token = token.split(" ")[1];
 		try {
 			const decodedValue = await admin.auth().verifyIdToken(token);
-
 			if (!decodedValue) return response.sendStatus(401);
 
 			// @ts-ignore
 			request.user = decodedValue;
 			return next();
-		} catch (error) {
+		} catch {
 			return response.sendStatus(500);
 		}
 	}

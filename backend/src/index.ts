@@ -1,7 +1,5 @@
-// import packages and types
 import express, { Express } from "express";
 
-// import routes
 // import userRouter from "./routes/user";
 import projectRouter from "./routes/projects";
 import Authentication from "./middleware/authentication";
@@ -12,6 +10,7 @@ const app: Express = express();
 
 app.use(express.json());
 app.use(Authentication.decodeToken);
+
 // app.use("/api/users", userRouter);
 app.use("/api/projects", projectRouter);
 // app.use("/api/tasks", taskRouter);
