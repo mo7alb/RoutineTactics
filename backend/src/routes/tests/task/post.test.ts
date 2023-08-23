@@ -38,11 +38,10 @@ describe("POST /api/tasks/", () => {
 		token = await customSignInToken.user.getIdToken();
 	});
 
-  afterEach(() => {
-    signOut(Auth);
+	afterEach(() => {
+		signOut(Auth);
 	});
 
-  
 	after(async () => {
 		await prisma.task.deleteMany();
 		await prisma.projectMember.deleteMany();

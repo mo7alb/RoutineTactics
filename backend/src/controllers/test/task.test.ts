@@ -1,6 +1,10 @@
 import sinon from "sinon";
 import { Request, Response } from "express";
+<<<<<<< HEAD
 import { PrismaClient, Project, Task } from "@prisma/client";
+=======
+import { PrismaClient, Project } from "@prisma/client";
+>>>>>>> ba986e3 (feature: add new task)
 import { TaskController } from "../";
 import { expect } from "chai";
 import { after, before, describe, it } from "mocha";
@@ -52,6 +56,7 @@ describe("Controller createTask", () => {
 		);
 	});
 });
+<<<<<<< HEAD
 
 describe("Controller getTask", () => {
 	let task: Task;
@@ -122,3 +127,5 @@ describe("Controller getTask", () => {
 		);
 	});
 });
+=======
+>>>>>>> ba986e3 (feature: add new task)
