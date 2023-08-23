@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { before, after, afterEach, beforeEach, describe, it } from "mocha";
 
 import app from "../../../index";
 
@@ -25,24 +25,28 @@ describe("Update exisiting project", () => {
 	};
 
 	// connect to the database, create a firebase user and jwt token and create a project to fetch
-	beforeEach(async function () {
+	before(async function () {
 		await prisma.$connect();
-
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
-
 		let project = await prisma.project.create({
 			data: { name: "Android", userId: user.uid },
 		});
 		baseURL = `/api/projects/${project.id}`;
 	});
 
+	beforeEach(async function () {
+		const customSignInToken = await signInWithCustomToken(
+			Auth,
+			await admin.auth().createCustomToken(user.uid)
+		);
+		token = await customSignInToken.user.getIdToken();
+	});
+
 	// abort database connection and delete all projects from the database
 	afterEach(async function () {
 		signOut(Auth);
+	});
+
+	after(async function () {
 		await prisma.project.deleteMany();
 		await prisma.$disconnect();
 	});

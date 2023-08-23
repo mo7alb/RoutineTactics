@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 import { expect } from "chai";
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { before, after, afterEach, beforeEach, describe, it } from "mocha";
 
 import chai from "chai";
 import chaiHttp from "chai-http";
@@ -9,7 +9,7 @@ import chaiHttp from "chai-http";
 import app from "../../../index";
 
 import admin from "../../../config/firebaseAdminConfig";
-import { signInWithCustomToken } from "firebase/auth";
+import { signInWithCustomToken, signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
 
 chai.use(chaiHttp);
@@ -28,9 +28,12 @@ describe("Create Project", () => {
 	// firebase jwt token
 	let token: string;
 
-	// connect to the database before each test & create jwt token
-	beforeEach(async function () {
+	before(async () => {
 		await prisma.$connect();
+	});
+
+	// connect to the database before each test & create jwt token
+	beforeEach(async () => {
 		const customSignInToken = await signInWithCustomToken(
 			Auth,
 			await admin.auth().createCustomToken(user.uid)
@@ -39,7 +42,12 @@ describe("Create Project", () => {
 	});
 
 	// disconnect the database connection after each test
-	afterEach(async function () {
+	afterEach(async () => {
+		signOut(Auth);
+	});
+
+	after(async () => {
+		await prisma.project.deleteMany();
 		await prisma.$disconnect();
 	});
 
