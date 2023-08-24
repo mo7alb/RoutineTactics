@@ -14,7 +14,7 @@ chai.use(chaiHttp);
 
 const prisma = new PrismaClient();
 
-describe("Update exisiting project", () => {
+describe("PUT /api/projects/:id", () => {
 	let baseURL: string;
 	let token: string;
 

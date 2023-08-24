@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 
 const prisma = new PrismaClient();
 
-describe("Delete Project", () => {
+describe("Delete /api/projects", () => {
 	let baseURL: string;
 	let token: string;
 	let project: Project;

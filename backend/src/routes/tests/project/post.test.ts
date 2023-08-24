@@ -16,7 +16,7 @@ chai.use(chaiHttp);
 
 const prisma = new PrismaClient();
 
-describe("Create Project", () => {
+describe("POST /api/projects", () => {
 	const baseURL = "/api/projects";
 
 	// mock firebase user

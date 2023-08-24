@@ -51,7 +51,34 @@ class TaskController {
 		}
 	}
 
-	async getTask(request: Request, response: Response) {}
+	async getTask(request: Request, response: Response) {
+		const id = request.params.id;
+		// @ts-ignore
+		const user: User = request.user;
+
+		const task = await prisma.task.findUnique({
+			where: { id },
+			include: {
+				project: {
+					select: {
+						userId: true,
+					},
+				},
+				Comment: true,
+			},
+		});
+
+		if (!task) return response.sendStatus(404);
+
+		if (task.createdById != user.uid && task.project.userId != user.uid) {
+			const member = await prisma.projectMember.findFirst({
+				where: { projectId: task.projectId, userId: user.uid },
+			});
+			if (!member) return response.sendStatus(403);
+		}
+
+		return response.status(200).json(task);
+	}
 
 	async updateTask(request: Request, response: Response) {}
 

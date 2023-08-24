@@ -14,7 +14,7 @@ chai.use(chaiHttp);
 
 const prisma = new PrismaClient();
 
-describe("Get project list", () => {
+describe("GET /api/projects", () => {
 	let baseURL = "/api/projects";
 
 	const user = {
@@ -76,7 +76,7 @@ describe("Get project list", () => {
 	});
 });
 
-describe("Get project", () => {
+describe("GET /api/project/:id", () => {
 	let project: Project;
 	let baseURL: string;
 	let token: string;

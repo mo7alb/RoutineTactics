@@ -16,7 +16,7 @@ chai.use(chaiHttp);
 
 const prisma = new PrismaClient();
 
-describe("Create new task", () => {
+describe("POST /api/tasks/", () => {
 	const baseURL = "/api/tasks/";
 
 	const mockUser = {
