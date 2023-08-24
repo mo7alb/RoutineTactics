@@ -56,33 +56,107 @@ class TaskController {
 		// @ts-ignore
 		const user: User = request.user;
 
-		const task = await prisma.task.findUnique({
-			where: { id },
-			include: {
-				project: {
-					select: {
-						userId: true,
+		try {
+			const task = await prisma.task.findUnique({
+				where: { id },
+				include: {
+					project: {
+						select: {
+							userId: true,
+						},
 					},
+					Comment: true,
 				},
-				Comment: true,
-			},
-		});
-
-		if (!task) return response.sendStatus(404);
-
-		if (task.createdById != user.uid && task.project.userId != user.uid) {
-			const member = await prisma.projectMember.findFirst({
-				where: { projectId: task.projectId, userId: user.uid },
 			});
-			if (!member) return response.sendStatus(403);
-		}
 
-		return response.status(200).json(task);
+			if (!task) return response.sendStatus(404);
+
+			if (task.createdById != user.uid && task.project.userId != user.uid) {
+				const member = await prisma.projectMember.findFirst({
+					where: { projectId: task.projectId, userId: user.uid },
+				});
+				if (!member) return response.sendStatus(403);
+			}
+
+			return response.status(200).json(task);
+		} catch {
+			return response.sendStatus(500);
+		}
 	}
 
-	async updateTask(request: Request, response: Response) {}
+	async updateTask(request: Request, response: Response) {
+		const id = request.params.id;
+		// @ts-ignore
+		const user: User = request.user;
 
-	async deleteTask(request: Request, response: Response) {}
+		const { title, description, labels, dueDate, completed } = request.body;
+
+		if (Object.keys(request.body).length === 0 || title != undefined)
+			return response.sendStatus(400);
+
+		try {
+			const task = await prisma.task.findUnique({
+				where: { id },
+				include: {
+					project: {
+						select: {
+							userId: true,
+							ProjectMembers: { select: { userId: true } },
+						},
+					},
+				},
+			});
+
+			if (!task) return response.sendStatus(404);
+
+			if (
+				task.createdById !== user.uid &&
+				task.project.userId !== user.uid &&
+				task.project.ProjectMembers.every(
+					member => member.userId !== user.uid
+				)
+			)
+				return response.sendStatus(403);
+
+			await prisma.task.update({
+				where: { id },
+				data: { title, description, labels, dueDate, completed },
+			});
+			return response.sendStatus(204);
+		} catch {
+			return response.sendStatus(400);
+		}
+	}
+
+	async deleteTask(request: Request, response: Response) {
+		const id = request.params.id;
+		// @ts-ignore
+		const user: User = request.user;
+
+		try {
+			const task = await prisma.task.findUnique({
+				where: { id },
+				include: {
+					project: {
+						select: {
+							userId: true,
+							ProjectMembers: { select: { userId: true } },
+						},
+					},
+				},
+			});
+
+			if (!task) return response.sendStatus(404);
+
+			if (task.createdById !== user.uid && task.project.userId !== user.uid)
+				return response.sendStatus(403);
+
+			await prisma.task.delete({ where: { id } });
+			return response.sendStatus(204);
+		} catch {
+			return response.sendStatus(400);
+		}
+	}
 }
 
 export { TaskController };
