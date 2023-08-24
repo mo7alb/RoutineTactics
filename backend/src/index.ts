@@ -1,9 +1,8 @@
 import express, { Express } from "express";
 
-// import userRouter from "./routes/user";
-import projectRouter from "./routes/projects";
 import Authentication from "./middleware/authentication";
-// import taskRouter from "./routes/tasks";
+import { ProjectRouter } from "./routes";
+import { TaskRouter } from "./routes";
 // import commentRouter from "./routes/comments";
 
 const app: Express = express();
@@ -11,9 +10,8 @@ const app: Express = express();
 app.use(express.json());
 app.use(Authentication.decodeToken);
 
-// app.use("/api/users", userRouter);
-app.use("/api/projects", projectRouter);
-// app.use("/api/tasks", taskRouter);
+app.use("/api/projects", ProjectRouter);
+app.use("/api/tasks", TaskRouter);
 // app.use("/api/comments", commentRouter);
 
 // listen for requests

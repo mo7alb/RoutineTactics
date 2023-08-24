@@ -11,4 +11,4 @@ router.get("/:id", controller.getProject);
 router.put("/:id", controller.updateProject);
 router.delete("/:id", controller.deleteProject);
 
-export default router;
+export { router as ProjectRouter };

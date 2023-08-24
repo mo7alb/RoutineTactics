@@ -24,7 +24,7 @@ model Project {
 // create a table for Users and Project combination called members
 model ProjectMember {
   id        String  @id @default(uuid())
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String
   userId    String
 }
@@ -32,7 +32,7 @@ model ProjectMember {
 model Task {
   // task details
   id          String    @id @default(uuid())
-  name        String
+  title       String
   description String?
   labels      String[]
   createdAt   DateTime  @default(now())
@@ -41,7 +41,7 @@ model Task {
 
   // project to which the task belongs to
   projectId String
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   // list of comments the task has
   Comment Comment[]
@@ -58,7 +58,7 @@ model Task {
 model Comment {
   id      String @id @default(uuid())
   comment String @db.VarChar()
-  task    Task   @relation(fields: [taskId], references: [id])
+  task    Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId  String
   userId  String
 

@@ -1,20 +1,18 @@
-import { PrismaClient } from "@prisma/client";
-
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { before, after, afterEach, beforeEach, describe, it } from "mocha";
 
 import app from "../../../index";
 
-import { signInWithCustomToken, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
-import admin from "../../../config/firebaseAdminConfig";
+
+import { prisma } from "../../../config/prisma";
+import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);
 
-const prisma = new PrismaClient();
-
-describe("PUT /api/projects/:id", () => {
+describe("PUT /api/tasks/:id", () => {
 	let baseURL: string;
 	let token: string;
 
@@ -26,49 +24,61 @@ describe("PUT /api/projects/:id", () => {
 
 	// connect to the database, create a firebase user and jwt token and create a project to fetch
 	before(async function () {
-		await prisma.$connect();
-		let project = await prisma.project.create({
+		const project = await prisma.project.create({
 			data: { name: "Android", userId: user.uid },
 		});
-		baseURL = `/api/projects/${project.id}`;
+
+		const task = await prisma.task.create({
+			data: {
+				title: "Code Review",
+				createdById: user.uid,
+				projectId: project.id,
+			},
+		});
+
+		baseURL = `/api/tasks/${task.id}`;
 	});
 
 	beforeEach(async function () {
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
+		token = await signInToken(user.uid);
 	});
 
-	// abort database connection and delete all projects from the database
+	// abort database connection and delete all tasks from the database
 	afterEach(async function () {
 		signOut(Auth);
 	});
 
 	after(async function () {
+		await prisma.task.deleteMany();
 		await prisma.project.deleteMany();
-		await prisma.$disconnect();
 	});
 
-	it("Should return a status of 204 upon updating project sucessfully", done => {
+	it("Should return a status of 204 upon updating task sucessfully", done => {
 		chai
 			.request(app)
 			.put(baseURL)
 			.set({ Authorization: `Bearer ${token}` })
-			.send({ name: "React", description: "A UI library" })
+			.send({
+				title: "Code Review",
+				description: "Review my code",
+				completed: true,
+			})
 			.end((_, response) => {
 				expect(response).to.have.status(204);
 				done();
 			});
 	});
 
-	it("Should return a status of 404 when request project does not exist", done => {
+	it("Should return a status of 404 when request task does not exist", done => {
 		chai
 			.request(app)
 			.put(`${baseURL}1234`)
 			.set({ Authorization: `Bearer ${token}` })
-			.send({ name: "React", description: "A UI library" })
+			.send({
+				title: "Code Review",
+				description: "Review my code",
+				completed: true,
+			})
 			.end((_, response) => {
 				expect(response).to.have.status(404);
 				done();
@@ -86,7 +96,7 @@ describe("PUT /api/projects/:id", () => {
 			});
 	});
 
-	it("Should return a status of 403 when user is not permitted to change project details", async () => {
+	it("Should return a status of 403 when user is not permitted to change task details", async () => {
 		// sign out with previous user
 		await signOut(Auth);
 
@@ -95,16 +105,18 @@ describe("PUT /api/projects/:id", () => {
 			email: "test2@test.io",
 			uid: "55555",
 		};
-		const customToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(invalidUser.uid)
-		);
-		const newToken = await customToken.user.getIdToken();
+
+		const newToken = signInToken(invalidUser.uid);
 
 		chai
 			.request(app)
 			.put(baseURL)
 			.set({ Authorization: `Bearer ${newToken}` })
+			.send({
+				title: "Code Review",
+				description: "Review my code",
+				completed: true,
+			})
 			.end((_, response) => {
 				expect(response).to.have.status(403);
 			});

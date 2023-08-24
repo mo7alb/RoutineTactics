@@ -3,7 +3,7 @@ import { PrismaClient, Project } from "@prisma/client";
 
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { after, afterEach, before, beforeEach, describe, it } from "mocha";
 
 import app from "../../../index";
 
@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 
 const prisma = new PrismaClient();
 
-describe("Delete Project", () => {
+describe("Delete /api/projects/:id", () => {
 	let baseURL: string;
 	let token: string;
 	let project: Project;
@@ -26,27 +26,35 @@ describe("Delete Project", () => {
 		uid: "1234",
 	};
 
-	// connect to the database, create a firebase user and jwt token and create a project to fetch
+	// connect to the database and create a project to fetch
+	// create a firebase user and jwt token
 	beforeEach(async function () {
-		await prisma.$connect();
+		project = await prisma.project.create({
+			data: { name: "Android", userId: user.uid },
+		});
+
+		baseURL = `/api/projects/${project.id}`;
 
 		const customSignInToken = await signInWithCustomToken(
 			Auth,
 			await admin.auth().createCustomToken(user.uid)
 		);
 		token = await customSignInToken.user.getIdToken();
+	});
 
-		project = await prisma.project.create({
-			data: { name: "Android", userId: user.uid },
-		});
-		baseURL = `/api/projects/${project.id}`;
+	before(async function () {
+		await prisma.$connect();
 	});
 
 	// abort database connection and delete all projects from the database
 	afterEach(async function () {
 		signOut(Auth);
+
 		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
+	});
+
+	after(async function () {
 		await prisma.$disconnect();
 	});
 
@@ -65,7 +73,6 @@ describe("Delete Project", () => {
 		await prisma.projectMember.createMany({
 			data: [
 				{ projectId: project.id, userId: "33333" },
-				{ projectId: project.id, userId: "55555" },
 				{ projectId: project.id, userId: "77777" },
 				{ projectId: project.id, userId: "121212" },
 			],
@@ -97,7 +104,7 @@ describe("Delete Project", () => {
 		// create a new user
 		const invalidUser = {
 			email: "test2@test.io",
-			uid: "55555",
+			uid: "15151515",
 		};
 		const customToken = await signInWithCustomToken(
 			Auth,

@@ -64,8 +64,9 @@ class ProjectController {
 		const user: User = request.user;
 
 		try {
-			const project = await await prisma.project.findUnique({
+			const project = await prisma.project.findUnique({
 				where: { id },
+				include: { Task: true },
 			});
 
 			if (project == null) return response.sendStatus(404);
@@ -77,8 +78,9 @@ class ProjectController {
 				if (!relation) return response.sendStatus(403);
 			}
 
-			return response.json(project).status(200);
+			return response.status(200).json(project);
 		} catch (error) {
+			console.error(error);
 			return response.sendStatus(500);
 		}
 	}

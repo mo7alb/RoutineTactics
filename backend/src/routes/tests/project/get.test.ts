@@ -2,7 +2,7 @@ import { PrismaClient, Project } from "@prisma/client";
 
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { afterEach, beforeEach, describe, it } from "mocha";
+import { after, before, beforeEach, afterEach, describe, it } from "mocha";
 
 import app from "../../../index";
 
@@ -14,7 +14,7 @@ chai.use(chaiHttp);
 
 const prisma = new PrismaClient();
 
-describe("Get project list", () => {
+describe("GET /api/projects", () => {
 	let baseURL = "/api/projects";
 
 	const user = {
@@ -25,7 +25,7 @@ describe("Get project list", () => {
 	let token: string;
 
 	// connect to the database, create a firebase jwt token and create some projects to fetch
-	beforeEach(async function () {
+	before(async () => {
 		await prisma.$connect();
 
 		const customSignInToken = await signInWithCustomToken(
@@ -47,8 +47,9 @@ describe("Get project list", () => {
 	});
 
 	// abort database connection and delete all projects from the database
-	afterEach(async function () {
+	after(async () => {
 		await signOut(Auth);
+		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
 		await prisma.$disconnect();
 	});
@@ -75,7 +76,7 @@ describe("Get project list", () => {
 	});
 });
 
-describe("Get project", () => {
+describe("GET /api/project/:id", () => {
 	let project: Project;
 	let baseURL: string;
 	let token: string;
@@ -87,14 +88,8 @@ describe("Get project", () => {
 	};
 
 	// connect to the database, create a firebase user and jwt token and create a project to fetch
-	beforeEach(async function () {
+	before(async function () {
 		await prisma.$connect();
-
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
 
 		project = await prisma.project.create({
 			data: { name: "Android", userId: user.uid },
@@ -102,14 +97,26 @@ describe("Get project", () => {
 		baseURL = `/api/projects/${project.id}`;
 	});
 
-	// abort database connection and delete all projects from the database
-	afterEach(async function () {
+	beforeEach(async function () {
+		const customSignInToken = await signInWithCustomToken(
+			Auth,
+			await admin.auth().createCustomToken(user.uid)
+		);
+		token = await customSignInToken.user.getIdToken();
+	});
+
+	afterEach(function () {
 		signOut(Auth);
+	});
+
+	// abort database connection and delete all projects from the database
+	after(async function () {
+		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
 		await prisma.$disconnect();
 	});
 
-	it("Should return a status of 200 request an existing project", done => {
+	it("Should return a status of 200 when requesting an existing project", done => {
 		chai
 			.request(app)
 			.get(baseURL)
@@ -117,6 +124,27 @@ describe("Get project", () => {
 			.end((_, response) => {
 				expect(response).to.have.status(200);
 				done();
+			});
+	});
+
+	it("Should return a status of 200 when a user member requests for an existing project", async () => {
+		signOut(Auth);
+		const newUser = { uid: "5555" };
+		const customSignInToken = await signInWithCustomToken(
+			Auth,
+			await admin.auth().createCustomToken(newUser.uid)
+		);
+		token = await customSignInToken.user.getIdToken();
+		await prisma.projectMember.create({
+			data: { projectId: project.id, userId: newUser.uid },
+		});
+
+		chai
+			.request(app)
+			.get(baseURL)
+			.set({ Authorization: `Bearer ${token}` })
+			.end((_, response) => {
+				expect(response).to.have.status(200);
 			});
 	});
 
