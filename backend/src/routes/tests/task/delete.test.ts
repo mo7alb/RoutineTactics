@@ -10,48 +10,6 @@ import { signInToken } from "../../../lib/signInToken";
 chai.use(chaiHttp);
 const prisma = new PrismaClient();
 
-// describe("Delete /api/tasks/:id", () => {
-// 	let baseURL: string;
-// 	let token: string;
-// 	let task: Task;
-
-// 	// mock firebase user
-// 	const user = {
-// 		email: "test@test.io",
-// 		uid: "1234",
-// 	};
-
-// 	// connect to the database and create a project to fetch
-// 	// create a firebase user and jwt token
-// 	before(async function () {
-// 		await prisma.$connect();
-// 		const project = await prisma.project.create({
-// 			data: { name: "Android", userId: user.uid },
-// 		});
-
-// 		task = await prisma.task.create({
-// 			data: {
-// 				title: "Code review",
-// 				projectId: project.id,
-// 				createdById: user.uid,
-// 			},
-// 		});
-
-// 		baseURL = `/api/tasks/${task.id}`;
-// 		console.log({ baseURL });
-// 		token = await signInToken(user.uid);
-// 	});
-
-// 	// abort database connection and delete all projects from the database
-// 	after(async function () {
-// 		await signOut(Auth);
-
-// 		await prisma.comment.deleteMany();
-// 		await prisma.task.deleteMany();
-// 		await prisma.project.deleteMany();
-// 		await prisma.$disconnect();
-// 	});
-
 describe("Delete /api/tasks/:id", () => {
 	let baseURL: string;
 	let token: string;
