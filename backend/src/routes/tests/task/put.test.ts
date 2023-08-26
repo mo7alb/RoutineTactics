@@ -106,7 +106,7 @@ describe("PUT /api/tasks/:id", () => {
 			uid: "55555",
 		};
 
-		const newToken = signInToken(invalidUser.uid);
+		const newToken = await signInToken(invalidUser.uid);
 
 		chai
 			.request(app)
@@ -117,7 +117,8 @@ describe("PUT /api/tasks/:id", () => {
 				description: "Review my code",
 				completed: true,
 			})
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(403);
 			});
 	});

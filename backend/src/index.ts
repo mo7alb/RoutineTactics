@@ -3,7 +3,7 @@ import express, { Express } from "express";
 import Authentication from "./middleware/authentication";
 import { ProjectRouter } from "./routes";
 import { TaskRouter } from "./routes";
-// import commentRouter from "./routes/comments";
+import { CommentRouter } from "./routes";
 
 const app: Express = express();
 
@@ -12,7 +12,7 @@ app.use(Authentication.decodeToken);
 
 app.use("/api/projects", ProjectRouter);
 app.use("/api/tasks", TaskRouter);
-// app.use("/api/comments", commentRouter);
+app.use("/api/comments", CommentRouter);
 
 // listen for requests
 const PORT = 3000;

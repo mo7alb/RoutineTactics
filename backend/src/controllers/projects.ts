@@ -27,6 +27,7 @@ class ProjectController {
 
 			return response.status(201).json(newProject);
 		} catch (error) {
+			console.error(error);
 			return response.sendStatus(500);
 		}
 	}
@@ -54,6 +55,7 @@ class ProjectController {
 
 			return response.json(projects).sendStatus(200);
 		} catch (error) {
+			console.error(error);
 			return response.sendStatus(500);
 		}
 	}
@@ -109,7 +111,8 @@ class ProjectController {
 				data: { name, description, dueDate, categories },
 			});
 			return response.sendStatus(204);
-		} catch {
+		} catch (error) {
+			console.error(error);
 			return response.sendStatus(500);
 		}
 	}
@@ -127,7 +130,8 @@ class ProjectController {
 			await prisma.projectMember.deleteMany({ where: { projectId: id } });
 			await prisma.project.delete({ where: { id } });
 			return response.sendStatus(204);
-		} catch {
+		} catch (error) {
+			console.error(error);
 			return response.sendStatus(500);
 		}
 	}
