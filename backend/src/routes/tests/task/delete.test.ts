@@ -1,58 +1,52 @@
-// delete a project
-import { Task } from "@prisma/client";
-
+import { PrismaClient, Task } from "@prisma/client";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { after, before, describe, it } from "mocha";
-
+import { after, afterEach, before, beforeEach, describe, it } from "mocha";
 import app from "../../../index";
-
 import { signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
-
-import { prisma } from "../../../config/prisma";
 import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);
+const prisma = new PrismaClient();
 
 describe("Delete /api/tasks/:id", () => {
 	let baseURL: string;
 	let token: string;
-	let task: Task;
+	let projectId: string;
+	let taskId: string;
 
-	// mock firebase user
-	const user = {
-		email: "test@test.io",
-		uid: "1234",
-	};
+	const mockUser = { uid: "555" };
 
-	// connect to the database and create a project to fetch
-	// create a firebase user and jwt token
-	before(async function () {
+	before(async () => {
+		await prisma.$connect();
 		const project = await prisma.project.create({
-			data: { name: "Android", userId: user.uid },
+			data: { name: "React", userId: mockUser.uid },
 		});
+		projectId = project.id;
 
+		token = await signInToken(mockUser.uid);
+	});
+
+	beforeEach(async () => {
 		const task = await prisma.task.create({
 			data: {
-				title: "Code review",
-				projectId: project.id,
-				createdById: user.uid,
+				title: "Code Review",
+				projectId,
+				createdById: mockUser.uid,
 			},
 		});
 
 		baseURL = `/api/tasks/${task.id}`;
-
-		token = await signInToken(user.uid);
+		taskId = task.id;
 	});
 
-	// abort database connection and delete all projects from the database
-	after(async function () {
+	after(async () => {
 		signOut(Auth);
 
-		await prisma.comment.deleteMany();
-		await prisma.task.deleteMany();
+		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
+		await prisma.$disconnect();
 	});
 
 	it("Should return a status of 204 upon successful task deletion", done => {
@@ -60,54 +54,60 @@ describe("Delete /api/tasks/:id", () => {
 			.request(app)
 			.delete(baseURL)
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(204);
 				done();
 			});
 	});
 
-	it("Should return a status of 204 upon deleting a task with comments", async () => {
-		await prisma.comment.createMany({
-			data: [
-				{
-					comment: "This code does not work",
-					taskId: task.id,
-					userId: user.uid,
-				},
-				{
-					comment: "This code does not work",
-					taskId: task.id,
-					userId: user.uid,
-				},
-			],
-		});
+	it("Should return a status of 401 when user is not permitted to delete task", done => {
 		chai
 			.request(app)
 			.delete(baseURL)
-			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
-				expect(response).to.have.status(204);
+			.end((error, response) => {
+				expect(error).to.be.null;
+				expect(response).to.have.status(401);
+				done();
 			});
 	});
 
 	it("Should return a status of 404 when request task does not exist", done => {
 		chai
 			.request(app)
-			.delete(`${baseURL}1234`)
+			.delete(`${baseURL}asdsadasd445da4sd`)
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(404);
 				done();
 			});
 	});
 
+	it("Should return a status of 204 upon deleting a task with comments", async () => {
+		await prisma.comment.create({
+			data: {
+				comment: "This code doesn't work",
+				userId: mockUser.uid,
+				taskId,
+			},
+		});
+
+		chai
+			.request(app)
+			.delete(baseURL)
+			.set({ Authorization: `Bearer ${token}` })
+			.end((error, response) => {
+				expect(error).to.be.null;
+				expect(response).to.have.status(204);
+			});
+	});
+
 	it("Should return a status of 403 when user is not permitted to delete task", async () => {
-		// sign out with previous user
+		// sign out with previous user and sign in with an invalid user
 		await signOut(Auth);
 
-		// create a new user
 		const invalidUser = {
-			email: "test2@test.io",
 			uid: "15151515",
 		};
 		const newToken = await signInToken(invalidUser.uid);
@@ -116,7 +116,8 @@ describe("Delete /api/tasks/:id", () => {
 			.request(app)
 			.delete(baseURL)
 			.set({ Authorization: `Bearer ${newToken}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(403);
 			});
 	});

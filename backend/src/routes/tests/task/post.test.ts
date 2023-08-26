@@ -1,13 +1,9 @@
 import { PrismaClient, Project } from "@prisma/client";
-
 import { expect } from "chai";
-import { afterEach, beforeEach, describe, it } from "mocha";
-
+import { after, afterEach, before, beforeEach, describe, it } from "mocha";
 import chai from "chai";
 import chaiHttp from "chai-http";
-
 import app from "../../../index";
-
 import admin from "../../../config/firebaseAdminConfig";
 import { signInWithCustomToken, signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
@@ -27,22 +23,27 @@ describe("POST /api/tasks/", () => {
 	let token: string;
 	let project: Project;
 
-	beforeEach(async () => {
+	before(async () => {
 		await prisma.$connect();
-
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(mockUser.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
-
 		project = await prisma.project.create({
 			data: { name: "Android", userId: mockUser.uid },
 		});
 	});
 
-	afterEach(async () => {
-		signOut(Auth);
+	beforeEach(async () => {
+		const customSignInToken = await signInWithCustomToken(
+			Auth,
+			await admin.auth().createCustomToken(mockUser.uid)
+		);
+		token = await customSignInToken.user.getIdToken();
+	});
+
+  afterEach(() => {
+    signOut(Auth);
+	});
+
+  
+	after(async () => {
 		await prisma.task.deleteMany();
 		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();

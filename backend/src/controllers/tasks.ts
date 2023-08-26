@@ -79,7 +79,8 @@ class TaskController {
 			}
 
 			return response.status(200).json(task);
-		} catch {
+		} catch (error) {
+			console.error(error);
 			return response.sendStatus(500);
 		}
 	}
@@ -91,7 +92,7 @@ class TaskController {
 
 		const { title, description, labels, dueDate, completed } = request.body;
 
-		if (Object.keys(request.body).length === 0 || title != undefined)
+		if (Object.keys(request.body).length === 0 || title == undefined)
 			return response.sendStatus(400);
 
 		try {
@@ -123,8 +124,9 @@ class TaskController {
 				data: { title, description, labels, dueDate, completed },
 			});
 			return response.sendStatus(204);
-		} catch {
-			return response.sendStatus(400);
+		} catch (error) {
+			console.error(error);
+			return response.sendStatus(500);
 		}
 	}
 
@@ -145,16 +147,18 @@ class TaskController {
 					},
 				},
 			});
-
+      
 			if (!task) return response.sendStatus(404);
 
 			if (task.createdById !== user.uid && task.project.userId !== user.uid)
 				return response.sendStatus(403);
 
+			await prisma.comment.deleteMany({ where: { taskId: id } });
 			await prisma.task.delete({ where: { id } });
 			return response.sendStatus(204);
-		} catch {
-			return response.sendStatus(400);
+		} catch (error) {
+			console.error(error);
+			return response.sendStatus(500);
 		}
 	}
 }
