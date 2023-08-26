@@ -147,7 +147,6 @@ class TaskController {
 					},
 				},
 			});
-
 			if (!task) return response.sendStatus(404);
 
 			if (task.createdById !== user.uid && task.project.userId !== user.uid)
