@@ -5,8 +5,11 @@ import {
 import { useForm } from "react-hook-form";
 import { Auth } from "../config/firebase";
 import { Alert } from "react-native";
+import { useRouter } from "expo-router";
 
 function useAuth() {
+	const router = useRouter();
+
 	const {
 		control,
 		handleSubmit,
@@ -22,6 +25,7 @@ function useAuth() {
 		async (data: { email: string; password: string }) => {
 			try {
 				await signInWithEmailAndPassword(Auth, data.email, data.password);
+				router.replace("/dashboard");
 			} catch (error) {
 				// @ts-ignore
 				const code = error.code;
@@ -57,6 +61,7 @@ function useAuth() {
 					data.email,
 					data.password
 				);
+				router.replace("/dashboard");
 			} catch (error) {
 				// @ts-ignore
 				const code = error.code;

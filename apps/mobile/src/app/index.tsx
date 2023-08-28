@@ -7,11 +7,11 @@ export default function HomeScreen() {
 	return (
 		<SafeAreaView style={containerStyles.container}>
 			<Text>Home</Text>
-			<Link href="/login">Login</Link>
+			<Link href="/(public)/login">Login</Link>
 
 			<View style={styles.reigster}>
 				<Text>Don't have an account</Text>
-				<Link href="/register" style={styles.registerText}>
+				<Link href="/(public)/register" style={styles.registerText}>
 					Register
 				</Link>
 			</View>

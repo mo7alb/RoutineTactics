@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, SafeAreaView } from "react-native";
 import { Link } from "expo-router";
-import { containerStyles } from "../components/styles/container";
-import RegisterForm from "../components/RegisterForm";
+import { containerStyles } from "../../components/styles/container";
+import RegisterForm from "../../components/RegisterForm";
 
 export default function RegisterScreen() {
 	return (
@@ -10,7 +10,7 @@ export default function RegisterScreen() {
 			<View>
 				<Text>Register</Text>
 				<RegisterForm />
-				<Link href="/">Login</Link>
+				<Link href="/login">Login</Link>
 			</View>
 		</SafeAreaView>
 	);
