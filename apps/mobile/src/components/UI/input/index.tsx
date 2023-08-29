@@ -38,11 +38,12 @@ export default function Input({
 const styles = StyleSheet.create({
 	input: {
 		borderWidth: 1,
-		paddingHorizontal: 10,
-		paddingVertical: 6,
+		paddingHorizontal: 15,
+		paddingVertical: 10,
 		borderRadius: 10,
 		marginHorizontal: 15,
 		marginVertical: 5,
+		width: "90%",
 	},
 	inputError: {
 		borderColor: "#fc2d57",

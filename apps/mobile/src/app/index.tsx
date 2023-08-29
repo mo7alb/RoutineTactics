@@ -1,11 +1,11 @@
 import React from "react";
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 import { Link } from "expo-router";
-import { containerStyles } from "../components/styles/container";
+import Container from "../components/UI/container";
 
 export default function HomeScreen() {
 	return (
-		<SafeAreaView style={containerStyles.container}>
+		<Container>
 			<Text>Home</Text>
 			<Link href="/(public)/login">Login</Link>
 
@@ -15,7 +15,7 @@ export default function HomeScreen() {
 					Register
 				</Link>
 			</View>
-		</SafeAreaView>
+		</Container>
 	);
 }
 

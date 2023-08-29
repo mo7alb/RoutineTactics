@@ -1,17 +1,13 @@
 import React from "react";
-import { View, Text, SafeAreaView } from "react-native";
 import { Link } from "expo-router";
-import { containerStyles } from "../../components/styles/container";
 import RegisterForm from "../../components/RegisterForm";
+import Container from "../../components/UI/container";
 
 export default function RegisterScreen() {
 	return (
-		<SafeAreaView style={containerStyles.container}>
-			<View>
-				<Text>Register</Text>
-				<RegisterForm />
-				<Link href="/login">Login</Link>
-			</View>
-		</SafeAreaView>
+		<Container title="Register">
+			<RegisterForm />
+			<Link href="/login">Login</Link>
+		</Container>
 	);
 }

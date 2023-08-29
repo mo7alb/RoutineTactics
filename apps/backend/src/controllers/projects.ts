@@ -19,13 +19,13 @@ class ProjectController {
 				data: {
 					name,
 					description,
-					dueDate,
+					dueDate: dueDate != null ? new Date(dueDate) : null,
 					categories,
 					userId: uid,
 				},
 			});
 
-			return response.status(201).json(newProject);
+			return response.status(201);
 		} catch (error) {
 			console.error(error);
 			return response.sendStatus(500);
@@ -38,22 +38,18 @@ class ProjectController {
 		try {
 			let projects: Project[] = await prisma.project.findMany({
 				where: { userId: uid },
-				include: {},
 			});
 			const relations = await prisma.projectMember.findMany({
 				where: { userId: uid },
+				include: { project: true },
 			});
 
-			for (const relation of relations) {
-				const project = await prisma.project.findUnique({
-					where: { id: relation.projectId },
-				});
-				if (project == null) continue;
-
-				projects = [...projects, project];
-			}
-
-			return response.json(projects).sendStatus(200);
+			return response
+				.status(200)
+				.json([
+					...projects,
+					...relations.map(relations => relations.project),
+				]);
 		} catch (error) {
 			console.error(error);
 			return response.sendStatus(500);

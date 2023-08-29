@@ -6,6 +6,7 @@ import {
 } from "expo-router";
 import AuthProvider, { useAuthContext } from "../context/AuthContext";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function AppStack() {
 	const user = useAuthContext();
@@ -24,10 +25,14 @@ function AppStack() {
 	return <Slot />;
 }
 
+const queryClient = new QueryClient();
+
 export default function RootLayout() {
 	return (
 		<AuthProvider>
-			<AppStack />
+			<QueryClientProvider client={queryClient}>
+				<AppStack />
+			</QueryClientProvider>
 		</AuthProvider>
 	);
 }

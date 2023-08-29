@@ -1,13 +1,12 @@
-import { View, Text, SafeAreaView, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
-import { containerStyles } from "../../components/styles/container";
 import { Link } from "expo-router";
 import LoginForm from "../../components/login/LoginForm";
+import Container from "../../components/UI/container";
 
 export default function LoginScreen() {
 	return (
-		<SafeAreaView style={containerStyles.container}>
-			<Text style={containerStyles.title}>login</Text>
+		<Container title="Login">
 			<LoginForm />
 			<View style={styles.register}>
 				<Text>Don't have an account</Text>
@@ -15,7 +14,7 @@ export default function LoginScreen() {
 					Register
 				</Link>
 			</View>
-		</SafeAreaView>
+		</Container>
 	);
 }
 

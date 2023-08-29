@@ -1,4 +1,6 @@
 import express, { Express } from "express";
+import dotenv from "dotenv";
+dotenv.config();
 
 import Authentication from "./middleware/authentication";
 import { ProjectRouter } from "./routes";
