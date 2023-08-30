@@ -77,7 +77,7 @@ export default function ProjectDetails() {
 					</Link>
 				</View>
 			)}
-
+			<Text>{JSON.stringify(data.categories)}</Text>
 			{/* list of tasks */}
 			{data.Task.length != 0 ? (
 				<TaskList tasks={data.Task} />
