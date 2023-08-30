@@ -15,7 +15,7 @@ class ProjectController {
 		try {
 			// @ts-ignore
 			const uid = request.user.uid;
-			const newProject = await prisma.project.create({
+			await prisma.project.create({
 				data: {
 					name,
 					description,
@@ -25,7 +25,7 @@ class ProjectController {
 				},
 			});
 
-			return response.status(201);
+			return response.sendStatus(201);
 		} catch (error) {
 			console.error(error);
 			return response.sendStatus(500);

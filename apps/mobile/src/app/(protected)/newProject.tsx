@@ -17,7 +17,7 @@ export default function NewProject() {
 				onPress={() => router.back()}
 				style={styles.close}
 			/>
-
+			<Text style={styles.title}>New project</Text>
 			<NewProjectForm />
 		</SafeAreaView>
 	);
@@ -40,5 +40,11 @@ const styles = StyleSheet.create({
 	container: {
 		height: "100%",
 		justifyContent: "center",
+	},
+	title: {
+		fontWeight: "bold",
+		fontSize: 30,
+		textAlign: "center",
+		marginBottom: 25,
 	},
 });

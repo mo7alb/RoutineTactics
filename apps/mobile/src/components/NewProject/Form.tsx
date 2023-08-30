@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Button } from "react-native";
+import { View, Text, KeyboardAvoidingView, Button, Alert } from "react-native";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Input from "../UI/input";
@@ -8,10 +8,10 @@ import { createProject } from "../../api/project";
 import { Project } from "../../types/project";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { router } from "expo-router";
+import { Controller } from "react-hook-form";
 
 export default function NewProjectForm() {
 	const [showDatePicker, setShowDatePicker] = useState(false);
-	const [dueDate, setDueDate] = useState<Date | null>();
 
 	const user = useAuthContext();
 	if (!user) return null;
@@ -19,17 +19,15 @@ export default function NewProjectForm() {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
-		mutationFn: (newProject: Project) =>
-			createProject(user, {
-				...newProject,
-				dueDate: dueDate != null ? dueDate.toISOString() : null,
-			}),
-		onSuccess: data => queryClient.invalidateQueries(["projects"]),
-		onError: error => {
-			console.error("An error occured");
-
-			console.error(error);
-		},
+		mutationFn: (newProject: Project) => createProject(user, newProject),
+		onSuccess: () => queryClient.invalidateQueries(["projects"]),
+		onError: error =>
+			Alert.alert(
+				"Error",
+				error instanceof Error
+					? error.message
+					: "An unknown error occured, try again later"
+			),
 	});
 
 	const {
@@ -40,11 +38,14 @@ export default function NewProjectForm() {
 		defaultValues: {
 			name: "",
 			description: "",
+			dueDate: new Date(),
 		},
 	});
 
 	const handleProjectSubmission = handleSubmit(data => {
-		mutation.mutate(data);
+		mutation.mutateAsync(data, {
+			onSuccess: () => console.log("this was a success"),
+		});
 
 		router.back();
 	});
@@ -78,13 +79,17 @@ export default function NewProjectForm() {
 			/>
 			{/* add date time picker here */}
 			<Button title="Due Date" onPress={() => setShowDatePicker(true)} />
-			<DateTimePickerModal
-				isVisible={showDatePicker}
-				onConfirm={date => {
-					setDueDate(date);
-					setShowDatePicker(false);
-				}}
-				onCancel={() => setShowDatePicker(false)}
+			<Controller
+				name="dueDate"
+				control={control}
+				render={({ field: { onChange } }) => (
+					<DateTimePickerModal
+						isVisible={showDatePicker}
+						onChange={onChange}
+						onConfirm={() => setShowDatePicker(false)}
+						onCancel={() => setShowDatePicker(false)}
+					/>
+				)}
 			/>
 			<Button title="Submit" onPress={handleProjectSubmission} />
 		</KeyboardAvoidingView>
