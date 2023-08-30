@@ -18,7 +18,8 @@ function AppStack() {
 		if (!navigationState?.key) return;
 		const inPublicRoute = segments[0] === "(public)";
 
-		if (user != null && !inPublicRoute) router.replace("/dashboard");
+		if (user != null && !inPublicRoute) router.push("/(protected)/app");
+
 		if (user == null) router.replace("/");
 	}, [user]);
 

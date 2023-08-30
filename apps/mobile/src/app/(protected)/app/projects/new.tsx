@@ -1,22 +1,12 @@
-import { View, Text, SafeAreaView, StyleSheet } from "react-native";
+import { Text, SafeAreaView, StyleSheet } from "react-native";
 import React from "react";
-import NewProjectForm from "../../components/NewProject/Form";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link, router } from "expo-router";
+import NewProjectForm from "../../../../components/NewProject/Form";
+import CloseModal from "../../../../components/UI/modal/CloseModal";
 
 export default function NewProject() {
-	const isVisible = router.canGoBack();
-
 	return (
 		<SafeAreaView style={styles.container}>
-			{!isVisible && <Link href="../">Dismiss</Link>}
-			<Ionicons
-				name="close"
-				size={32}
-				color="red"
-				onPress={() => router.back()}
-				style={styles.close}
-			/>
+			<CloseModal />
 			<Text style={styles.title}>New project</Text>
 			<NewProjectForm />
 		</SafeAreaView>

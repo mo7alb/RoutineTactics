@@ -11,6 +11,12 @@ import DatePicker from "../UI/datePicker";
 import { errorStyles } from "../styles/error";
 import Categories from "../Categories";
 
+const defaultValues = {
+	name: "",
+	description: "",
+	dueDate: new Date(),
+};
+
 export default function NewProjectForm() {
 	const [categories, setCategories] = useState<string[]>([]);
 
@@ -36,13 +42,7 @@ export default function NewProjectForm() {
 		control,
 		handleSubmit,
 		formState: { errors },
-	} = useForm({
-		defaultValues: {
-			name: "",
-			description: "",
-			dueDate: new Date(),
-		},
-	});
+	} = useForm({ defaultValues });
 
 	const handleProjectSubmission = handleSubmit(data => {
 		mutation.mutateAsync(data);
@@ -71,6 +71,10 @@ export default function NewProjectForm() {
 							value: 3,
 							message: "Name should at least be 3 characters long",
 						},
+						maxLength: {
+							value: 25,
+							message: "Name should be less than 25 characters",
+						},
 					}}
 					placeholder="Project Name"
 					error={errors.name != null}
@@ -83,6 +87,10 @@ export default function NewProjectForm() {
 							value: 5,
 							message:
 								"Description should at least be 5 characters long",
+						},
+						maxLength: {
+							value: 100,
+							message: "Description should be less than 100 characters",
 						},
 					}}
 					placeholder="Project Description"

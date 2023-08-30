@@ -1,22 +1,20 @@
-import { Stack, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 
 export default function ProtectedLayout() {
 	return (
-		<Stack>
-			<Stack.Screen name="dashboard" options={{ headerShown: false }} />
-			<Stack.Screen name="projects/[id]" options={{ headerShown: false }} />
-			<Stack.Screen
-				name="projects/delete"
-				options={{ presentation: "modal", headerShown: false }}
+		<Tabs>
+			<Tabs.Screen
+				name="app"
+				options={{
+					headerShown: false,
+				}}
 			/>
-			<Stack.Screen
-				name="projects/edit"
-				options={{ presentation: "modal", headerShown: false }}
+			<Tabs.Screen
+				name="settings"
+				options={{
+					headerShown: false,
+				}}
 			/>
-			<Stack.Screen
-				name="newProject"
-				options={{ presentation: "modal", headerShown: false }}
-			/>
-		</Stack>
+		</Tabs>
 	);
 }

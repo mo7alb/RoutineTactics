@@ -1,16 +1,17 @@
 import { Button, StyleSheet } from "react-native";
 import React from "react";
 import { signOut } from "firebase/auth";
-import { Auth } from "../../config/firebase";
-import ProjectList from "../../components/ProjectList";
-import Container from "../../components/UI/container";
+
+import ProjectList from "../../../components/ProjectList";
+import Container from "../../../components/UI/container";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Link } from "expo-router";
+import { Auth } from "../../../config/firebase";
 
 export default function Dashboard() {
 	return (
 		<Container title="Dashboard">
-			<Link href="/newProject" style={styles.modalToggle}>
+			<Link href="/projects/new" style={styles.modalToggle}>
 				<Ionicons name="add" size={32} color="teal" />
 			</Link>
 

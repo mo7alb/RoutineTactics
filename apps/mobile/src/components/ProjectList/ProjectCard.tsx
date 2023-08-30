@@ -18,7 +18,12 @@ export default function ProjectCard({ project }: Prop) {
 			</View>
 			{/* View for naviagation */}
 			<View style={styles.navigation}>
-				<Link href={`/projects/${project.id}`}>
+				<Link
+					href={{
+						pathname: `/app/projects/details`,
+						params: { id: project.id },
+					}}
+				>
 					<AntDesign name="right" size={24} color="black" />
 				</Link>
 			</View>

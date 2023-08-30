@@ -25,7 +25,7 @@ function useAuth() {
 		async (data: { email: string; password: string }) => {
 			try {
 				await signInWithEmailAndPassword(Auth, data.email, data.password);
-				router.replace("/dashboard");
+				router.replace("/(protected)/app");
 			} catch (error) {
 				// @ts-ignore
 				const code = error.code;

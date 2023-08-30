@@ -2,12 +2,12 @@ import { Text, SafeAreaView, ActivityIndicator } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { getProject } from "../../../api/project";
-import { useAuthContext } from "../../../context/AuthContext";
-import CloseModal from "../../../components/UI/modal/CloseModal";
-import Container from "../../../components/UI/container";
-import EditProjectForm from "../../../components/EditProject";
-import { modalStyles } from "../../../components/styles/modal";
+import { getProject } from "../../../../api/project";
+import { useAuthContext } from "../../../../context/AuthContext";
+import CloseModal from "../../../../components/UI/modal/CloseModal";
+import Container from "../../../../components/UI/container";
+import EditProjectForm from "../../../../components/EditProject";
+import { modalStyles } from "../../../../components/styles/modal";
 
 export default function EditProject() {
 	const { id } = useLocalSearchParams();

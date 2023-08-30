@@ -71,9 +71,13 @@ export default function EditProjectForm({ user, project }: Props) {
 					control={control}
 					rules={{
 						required: "Name is required",
-						length: {
+						minLength: {
 							value: 3,
 							message: "Name should at least be 3 characters long",
+						},
+						maxLength: {
+							value: 25,
+							message: "Name should be less than 25 characters",
 						},
 					}}
 					placeholder="Project Name"
@@ -83,10 +87,14 @@ export default function EditProjectForm({ user, project }: Props) {
 					name="description"
 					control={control}
 					rules={{
-						length: {
+						minLength: {
 							value: 5,
 							message:
 								"Description should at least be 5 characters long",
+						},
+						maxLength: {
+							value: 100,
+							message: "Description should be less than 100 characters",
 						},
 					}}
 					placeholder="Project Description"

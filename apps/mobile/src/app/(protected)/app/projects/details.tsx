@@ -2,12 +2,12 @@ import React from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import Container from "../../../components/UI/container";
+import Container from "../../../../components/UI/container";
 import { useLocalSearchParams, Redirect, Link } from "expo-router";
-import { useAuthContext } from "../../../context/AuthContext";
+import { useAuthContext } from "../../../../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
-import { getProject } from "../../../api/project";
-import { Task } from "../../../types/task";
+import { getProject } from "../../../../api/project";
+import { Task } from "../../../../types/task";
 
 export default function ProjectDetails() {
 	const { id } = useLocalSearchParams();
@@ -51,7 +51,7 @@ export default function ProjectDetails() {
 				<View style={styles.iconContainer}>
 					<Link
 						href={{
-							pathname: "/projects/edit",
+							pathname: "/app/projects/edit",
 							params: { id: data.id },
 						}}
 					>
@@ -64,7 +64,7 @@ export default function ProjectDetails() {
 					</Link>
 					<Link
 						href={{
-							pathname: "/projects/delete",
+							pathname: "/app/projects/delete",
 							params: { id: data.id },
 						}}
 					>

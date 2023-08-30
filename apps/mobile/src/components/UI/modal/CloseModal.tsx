@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 
 export default function CloseModal() {
 	const isVisible = router.canGoBack();
-
+	console.log(isVisible);
 	return (
 		<>
 			{!isVisible && <Link href="../">Dismiss</Link>}
@@ -33,5 +33,6 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		right: 15,
 		top: 60,
+		zIndex: 1,
 	},
 });

@@ -1,11 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Link, Redirect, router, useLocalSearchParams } from "expo-router";
-import Container from "../../../components/UI/container";
+import Container from "../../../../components/UI/container";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteProject } from "../../../api/project";
-import { useAuthContext } from "../../../context/AuthContext";
+import { deleteProject } from "../../../../api/project";
+import { useAuthContext } from "../../../../context/AuthContext";
 
 export default function DeleteProject() {
 	const { id } = useLocalSearchParams();
