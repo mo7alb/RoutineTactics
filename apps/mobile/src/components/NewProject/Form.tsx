@@ -9,10 +9,9 @@ import { Project } from "../../types/project";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { router } from "expo-router";
 import { Controller } from "react-hook-form";
+import DatePicker from "../UI/datePicker";
 
 export default function NewProjectForm() {
-	const [showDatePicker, setShowDatePicker] = useState(false);
-
 	const user = useAuthContext();
 	if (!user) return null;
 
@@ -77,20 +76,7 @@ export default function NewProjectForm() {
 				placeholder="Project Description"
 				error={errors.description != null}
 			/>
-			{/* add date time picker here */}
-			<Button title="Due Date" onPress={() => setShowDatePicker(true)} />
-			<Controller
-				name="dueDate"
-				control={control}
-				render={({ field: { onChange } }) => (
-					<DateTimePickerModal
-						isVisible={showDatePicker}
-						onChange={onChange}
-						onConfirm={() => setShowDatePicker(false)}
-						onCancel={() => setShowDatePicker(false)}
-					/>
-				)}
-			/>
+			<DatePicker control={control} />
 			<Button title="Submit" onPress={handleProjectSubmission} />
 		</KeyboardAvoidingView>
 	);

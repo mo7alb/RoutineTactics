@@ -10,6 +10,10 @@ export default function ProtectedLayout() {
 				options={{ presentation: "modal", headerShown: false }}
 			/>
 			<Stack.Screen
+				name="projects/edit"
+				options={{ presentation: "modal", headerShown: false }}
+			/>
+			<Stack.Screen
 				name="newProject"
 				options={{ presentation: "modal", headerShown: false }}
 			/>

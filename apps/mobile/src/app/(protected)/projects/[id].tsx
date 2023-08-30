@@ -16,7 +16,7 @@ export default function ProjectDetails() {
 	if (user == null) return <View>Unauthenticated</View>;
 
 	const { data, isError, error, isLoading } = useQuery({
-		queryKey: ["project"],
+		queryKey: ["project", id],
 		queryFn: () => getProject(user, id as string),
 	});
 
@@ -49,12 +49,19 @@ export default function ProjectDetails() {
 			</View>
 			{user.uid == data.userId && (
 				<View style={styles.iconContainer}>
-					<Feather
-						name="edit"
-						size={24}
-						color="black"
-						style={styles.edit}
-					/>
+					<Link
+						href={{
+							pathname: "/projects/edit",
+							params: { id: data.id },
+						}}
+					>
+						<Feather
+							name="edit"
+							size={24}
+							color="black"
+							style={styles.edit}
+						/>
+					</Link>
 					<Link
 						href={{
 							pathname: "/projects/delete",

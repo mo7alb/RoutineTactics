@@ -3,7 +3,6 @@ import { View, Text, KeyboardAvoidingView, Button } from "react-native";
 import { useAuth } from "../../hooks/useAuth";
 import { errorStyles } from "../styles/error";
 import Input from "../UI/input";
-import { keyboardViewStyles } from "../styles/keyboardView";
 
 export default function LoginForm() {
 	const { control, errors, signIn } = useAuth();
@@ -17,7 +16,7 @@ export default function LoginForm() {
 					<Text style={errorStyles.error}>{errors.password.message}</Text>
 				)}
 			</View>
-			<KeyboardAvoidingView style={keyboardViewStyles.container}>
+			<KeyboardAvoidingView>
 				<Input
 					name="email"
 					control={control}

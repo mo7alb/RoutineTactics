@@ -46,6 +46,20 @@ async function getProject(user: User, projectId: string): Promise<Project> {
 	return await response.json();
 }
 
+async function editProject(user: User, projectId: string, project: Project) {
+	const token = await user.getIdToken();
+	const response = await fetch(`${baseURL}/api/projects/${projectId}`, {
+		method: "PUT",
+		headers: {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		},
+		body: JSON.stringify(project),
+	});
+	if (response.status !== 204) throw new Error("Error editing project");
+}
+
 async function deleteProject(user: User, projectId: string) {
 	const token = await user.getIdToken();
 	const response = await fetch(`${baseURL}/api/projects/${projectId}`, {
@@ -57,4 +71,4 @@ async function deleteProject(user: User, projectId: string) {
 	if (response.status !== 204) throw new Error("Error deleting project");
 }
 
-export { getProjects, createProject, getProject, deleteProject };
+export { getProjects, createProject, getProject, editProject, deleteProject };
