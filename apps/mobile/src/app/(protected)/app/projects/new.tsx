@@ -14,19 +14,6 @@ export default function NewProject() {
 }
 
 const styles = StyleSheet.create({
-	close: {
-		width: 55,
-		height: 55,
-		marginBottom: 10,
-		borderWidth: 1,
-		borderColor: "#f2f2f2",
-		padding: 10,
-		borderRadius: 10,
-		alignSelf: "center",
-		position: "absolute",
-		right: 15,
-		top: 60,
-	},
 	container: {
 		height: "100%",
 		justifyContent: "center",

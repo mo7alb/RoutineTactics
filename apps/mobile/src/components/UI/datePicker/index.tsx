@@ -1,9 +1,13 @@
 import { Button } from "react-native";
 import React, { useState } from "react";
-import { Controller } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-export default function DatePicker({ control }) {
+type Props = {
+	control: Control<any, any>;
+};
+
+export default function DatePicker({ control }: Props) {
 	const [showDatePicker, setShowDatePicker] = useState(false);
 
 	return (

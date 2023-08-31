@@ -3,7 +3,7 @@ import { Task } from "../types/task";
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL;
 
-async function createTask(user: User, task: Task) {
+async function createTask(user: User, task: Task, projectId: string) {
 	const token = await user.getIdToken();
 	const response = await fetch(`${baseURL}/api/tasks`, {
 		method: "POST",
@@ -12,7 +12,7 @@ async function createTask(user: User, task: Task) {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${token}`,
 		},
-		body: JSON.stringify(task),
+		body: JSON.stringify({ ...task, projectId }),
 	});
 
 	if (response.status != 201) throw new Error("Unable to create task");

@@ -3,11 +3,11 @@ type Task = {
 	title: string;
 	description?: string;
 	labels: string[];
-	createdAt: string;
-	dueDate?: string;
+	createdAt: string | Date;
+	dueDate?: string | Date;
 	completed: boolean;
 	projectId: string;
-	Comment: Comment[];
+	comments: Comment[];
 	createdById: string;
 	assignedToId?: string;
 };

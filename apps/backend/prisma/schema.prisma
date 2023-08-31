@@ -8,20 +8,26 @@ datasource db {
 }
 
 model Project {
-  id             String          @id @default(uuid())
-  name           String
-  description    String?
-  createdAt      DateTime        @default(now())
-  dueDate        DateTime?
-  userId         String
-  categories     String[]
-  ProjectMembers ProjectMember[]
-  Task           Task[]
+  id          String          @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime        @default(now())
+  dueDate     DateTime?
+  userId      String
+  categories  String[]
+  members     ProjectMember[]
+  tasks       Task[]
 
   @@map("projects")
 }
 
-// create a table for Users and Project combination called members
+model ProjectMemberNotification {
+  id        String @id @default(uuid())
+  projectId String
+  userId    String
+  sentBy    String
+}
+
 model ProjectMember {
   id        String  @id @default(uuid())
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -44,7 +50,7 @@ model Task {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   // list of comments the task has
-  Comment Comment[]
+  comments Comment[]
 
   // User who created the task
   createdById String

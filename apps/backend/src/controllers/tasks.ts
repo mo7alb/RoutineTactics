@@ -65,7 +65,7 @@ class TaskController {
 							userId: true,
 						},
 					},
-					Comment: true,
+					comments: true,
 				},
 			});
 
@@ -102,7 +102,7 @@ class TaskController {
 					project: {
 						select: {
 							userId: true,
-							ProjectMembers: { select: { userId: true } },
+							members: { select: { userId: true } },
 						},
 					},
 				},
@@ -113,9 +113,7 @@ class TaskController {
 			if (
 				task.createdById !== user.uid &&
 				task.project.userId !== user.uid &&
-				task.project.ProjectMembers.every(
-					member => member.userId !== user.uid
-				)
+				task.project.members.every(member => member.userId !== user.uid)
 			)
 				return response.sendStatus(403);
 
@@ -142,7 +140,7 @@ class TaskController {
 					project: {
 						select: {
 							userId: true,
-							ProjectMembers: { select: { userId: true } },
+							members: { select: { userId: true } },
 						},
 					},
 				},

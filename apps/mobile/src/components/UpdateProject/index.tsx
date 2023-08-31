@@ -16,7 +16,7 @@ type Props = {
 	project: Project;
 };
 
-export default function EditProjectForm({ user, project }: Props) {
+export default function UpdateProjectForm({ user, project }: Props) {
 	const [categories, setCategories] = useState(project.categories);
 	const {
 		control,

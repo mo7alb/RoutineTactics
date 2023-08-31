@@ -4,12 +4,12 @@ type Project = {
 	id?: string;
 	name: string;
 	description?: string;
-	createdAt: string;
-	dueDate: string;
-	userId: string;
+	createdAt?: string;
+	dueDate: Date | string;
+	userId?: string;
 	categories: string[];
 	projectMembers: string[];
-	Task: Task[];
+	tasks: Task[];
 };
 
 export { Project };

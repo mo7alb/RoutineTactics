@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import Container from "../../../../components/UI/container";
-import { useLocalSearchParams, Redirect, Link } from "expo-router";
+import { useLocalSearchParams, Link } from "expo-router";
 import { useAuthContext } from "../../../../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { getProject } from "../../../../api/project";
 import { Task } from "../../../../types/task";
+import OpenModal from "../../../../components/UI/modal/OpenModal";
+import TaskList from "../../../../components/TaskList";
 
 export default function ProjectDetails() {
 	const { id } = useLocalSearchParams();
@@ -40,6 +42,9 @@ export default function ProjectDetails() {
 
 	return (
 		<Container title="Project Details">
+			<OpenModal
+				path={{ pathname: "/app/tasks/new", params: { id: id as string } }}
+			/>
 			<View>
 				<Text>{data.name}</Text>
 				<Text>{data.description}</Text>
@@ -51,7 +56,7 @@ export default function ProjectDetails() {
 				<View style={styles.iconContainer}>
 					<Link
 						href={{
-							pathname: "/app/projects/edit",
+							pathname: "/app/projects/update",
 							params: { id: data.id },
 						}}
 					>
@@ -77,10 +82,9 @@ export default function ProjectDetails() {
 					</Link>
 				</View>
 			)}
-			<Text>{JSON.stringify(data.categories)}</Text>
-			{/* list of tasks */}
-			{data.Task.length != 0 ? (
-				<TaskList tasks={data.Task} />
+
+			{data.tasks.length != 0 ? (
+				<TaskList tasks={data.tasks} />
 			) : (
 				<Text>No Tasks. Get started by adding new Tasks</Text>
 			)}
@@ -102,25 +106,3 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 	},
 });
-
-type Props = {
-	tasks: Task[];
-};
-
-function TaskList({ tasks }: Props) {
-	return (
-		<View>
-			{tasks.map(task => (
-				<TaskCard task={task} />
-			))}
-		</View>
-	);
-}
-
-function TaskCard({ task }) {
-	return (
-		<View>
-			<Text>{task.title}</Text>
-		</View>
-	);
-}

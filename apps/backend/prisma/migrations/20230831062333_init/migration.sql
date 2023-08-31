@@ -12,6 +12,16 @@ CREATE TABLE "projects" (
 );
 
 -- CreateTable
+CREATE TABLE "ProjectMemberNotification" (
+    "id" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "sentBy" TEXT NOT NULL,
+
+    CONSTRAINT "ProjectMemberNotification_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "ProjectMember" (
     "id" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,

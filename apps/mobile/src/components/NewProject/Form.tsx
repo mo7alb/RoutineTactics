@@ -44,8 +44,8 @@ export default function NewProjectForm() {
 		formState: { errors },
 	} = useForm({ defaultValues });
 
-	const handleProjectSubmission = handleSubmit(data => {
-		mutation.mutateAsync(data);
+	const handleProjectSubmission = handleSubmit((data: Partial<Project>) => {
+		mutation.mutateAsync(data as Project);
 		router.back();
 	});
 

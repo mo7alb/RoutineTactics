@@ -6,10 +6,10 @@ import { getProject } from "../../../../api/project";
 import { useAuthContext } from "../../../../context/AuthContext";
 import CloseModal from "../../../../components/UI/modal/CloseModal";
 import Container from "../../../../components/UI/container";
-import EditProjectForm from "../../../../components/EditProject";
+import UpdateProjectForm from "../../../../components/UpdateProject";
 import { modalStyles } from "../../../../components/styles/modal";
 
-export default function EditProject() {
+export default function UpdateProject() {
 	const { id } = useLocalSearchParams();
 
 	const user = useAuthContext();
@@ -42,7 +42,7 @@ export default function EditProject() {
 		<SafeAreaView style={modalStyles.container}>
 			<CloseModal />
 			<Text style={modalStyles.title}>Edit Project</Text>
-			<EditProjectForm user={user} project={data} />
+			<UpdateProjectForm user={user} project={data} />
 		</SafeAreaView>
 	);
 }

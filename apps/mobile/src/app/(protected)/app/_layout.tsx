@@ -13,11 +13,32 @@ export default function AppLayout() {
 				options={{ presentation: "modal", headerShown: false }}
 			/>
 			<Stack.Screen
-				name="projects/edit"
+				name="projects/update"
 				options={{ presentation: "modal", headerShown: false }}
 			/>
 			<Stack.Screen
 				name="projects/new"
+				options={{ presentation: "modal", headerShown: false }}
+			/>
+			<Stack.Screen name="tasks/details" options={{ headerShown: false }} />
+			<Stack.Screen
+				name="tasks/new"
+				options={{ presentation: "modal", headerShown: false }}
+			/>
+			<Stack.Screen
+				name="tasks/delete"
+				options={{ presentation: "modal", headerShown: false }}
+			/>
+			<Stack.Screen
+				name="tasks/update"
+				options={{ presentation: "modal", headerShown: false }}
+			/>
+			<Stack.Screen
+				name="comments/update"
+				options={{ presentation: "modal", headerShown: false }}
+			/>
+			<Stack.Screen
+				name="comments/delete"
 				options={{ presentation: "modal", headerShown: false }}
 			/>
 		</Stack>

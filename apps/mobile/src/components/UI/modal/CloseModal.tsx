@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 
 export default function CloseModal() {
 	const isVisible = router.canGoBack();
-	console.log(isVisible);
+
 	return (
 		<>
 			{!isVisible && <Link href="../">Dismiss</Link>}

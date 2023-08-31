@@ -1,39 +1,13 @@
-import { Button, StyleSheet } from "react-native";
 import React from "react";
-import { signOut } from "firebase/auth";
-
 import ProjectList from "../../../components/ProjectList";
 import Container from "../../../components/UI/container";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link } from "expo-router";
-import { Auth } from "../../../config/firebase";
+import OpenModal from "../../../components/UI/modal/OpenModal";
 
 export default function Dashboard() {
 	return (
 		<Container title="Dashboard">
-			<Link href="/projects/new" style={styles.modalToggle}>
-				<Ionicons name="add" size={32} color="teal" />
-			</Link>
-
+			<OpenModal path="/app/projects/new" />
 			<ProjectList />
-			<Button title="logout" onPress={() => signOut(Auth)} />
 		</Container>
 	);
 }
-
-const styles = StyleSheet.create({
-	modalToggle: {
-		width: 55,
-		height: 55,
-		marginBottom: 10,
-		borderWidth: 1,
-		borderColor: "#f2f2f2",
-		padding: 10,
-		borderRadius: 10,
-		alignSelf: "center",
-		position: "absolute",
-		zIndex: 1,
-		bottom: 15,
-		right: 15,
-	},
-});

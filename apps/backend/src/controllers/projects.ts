@@ -64,7 +64,7 @@ class ProjectController {
 		try {
 			const project = await prisma.project.findUnique({
 				where: { id },
-				include: { Task: true },
+				include: { tasks: true },
 			});
 
 			if (project == null) return response.sendStatus(404);
