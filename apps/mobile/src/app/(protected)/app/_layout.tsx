@@ -34,11 +34,7 @@ export default function AppLayout() {
 				options={{ presentation: "modal", headerShown: false }}
 			/>
 			<Stack.Screen
-				name="comments/update"
-				options={{ presentation: "modal", headerShown: false }}
-			/>
-			<Stack.Screen
-				name="comments/delete"
+				name="members/list"
 				options={{ presentation: "modal", headerShown: false }}
 			/>
 		</Stack>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	View,
 	Text,
@@ -16,7 +16,7 @@ import { errorStyles } from "../styles/error";
 import Input from "../UI/input";
 import DatePicker from "../UI/datePicker";
 import { router } from "expo-router";
-import { MultipleSelectList } from "react-native-dropdown-select-list";
+import MultiSelectDropDown from "../MultiSelectDropDown";
 
 type Props = {
 	projectId: string;
@@ -31,6 +31,7 @@ const defaultValues = {
 };
 
 export default function NewTaskForm({ projectId, categories }: Props) {
+	const [labels, setLabels] = useState<string[]>([]);
 	const user = useAuthContext();
 	if (!user) return null;
 
@@ -55,9 +56,41 @@ export default function NewTaskForm({ projectId, categories }: Props) {
 	} = useForm({ defaultValues });
 
 	const handleCreateTask = handleSubmit((data: Partial<Task>) => {
-		mutation.mutate(data as Task);
+		mutation.mutate({ ...data, labels } as Task);
 		router.back();
 	});
+
+	const inputs = [
+		{
+			name: "title",
+			rules: {
+				required: "Title is required",
+				minLength: {
+					value: 3,
+					message: "Title should at least be 3 characters long",
+				},
+				maxLength: {
+					value: 25,
+					message: "Title should be less than 25 characters",
+				},
+			},
+			placeholder: "Task Title",
+		},
+		{
+			name: "description",
+			rules: {
+				minLength: {
+					value: 5,
+					message: "Description should at least be 5 characters long",
+				},
+				maxLength: {
+					value: 100,
+					message: "Description should be less than 100 characters",
+				},
+			},
+			placeholder: "Task Description",
+		},
+	];
 
 	return (
 		<>
@@ -72,59 +105,24 @@ export default function NewTaskForm({ projectId, categories }: Props) {
 				)}
 			</View>
 			<KeyboardAvoidingView>
-				<Input
-					name="title"
-					control={control}
-					rules={{
-						required: "Title is required",
-						minLength: {
-							value: 3,
-							message: "Title should at least be 3 characters long",
-						},
-						maxLength: {
-							value: 25,
-							message: "Title should be less than 25 characters",
-						},
-					}}
-					placeholder="Task Title"
-					error={errors.title != null}
-				/>
-				<Input
-					name="description"
-					control={control}
-					rules={{
-						minLength: {
-							value: 5,
-							message:
-								"Description should at least be 5 characters long",
-						},
-						maxLength: {
-							value: 100,
-							message: "Description should be less than 100 characters",
-						},
-					}}
-					placeholder="Task Description"
-					error={errors.description != null}
-				/>
+				{inputs.map(input => (
+					<Input
+						key={input.name}
+						name={input.name}
+						control={control}
+						rules={input.rules}
+						placeholder={input.placeholder}
+						error={errors[input.name] != null}
+					/>
+				))}
+
 				<DatePicker control={control} />
 				{categories.length !== 0 && (
-					<Controller
-						name="labels"
-						control={control}
-						render={({ field: { onChange } }) => (
-							<MultipleSelectList
-								setSelected={onChange}
-								data={categories}
-								placeholder="Select label"
-								label="Label"
-								maxHeight={Dimensions.get("window").height * 0.4}
-								boxStyles={{
-									width: "90%",
-									justifyContent: "center",
-									alignSelf: "center",
-								}}
-							/>
-						)}
+					<MultiSelectDropDown
+						options={categories}
+						label="Select Category"
+						selected={labels}
+						setSelected={setLabels}
 					/>
 				)}
 				<Button title="Submit" onPress={handleCreateTask} />

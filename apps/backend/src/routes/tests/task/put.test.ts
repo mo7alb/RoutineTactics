@@ -1,12 +1,9 @@
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { before, after, afterEach, beforeEach, describe, it } from "mocha";
-
 import app from "../../../index";
-
 import { signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
-
 import { prisma } from "../../../config/prisma";
 import { signInToken } from "../../../lib/signInToken";
 

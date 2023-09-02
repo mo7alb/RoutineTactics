@@ -30,8 +30,10 @@ describe("POST /api/comments", () => {
 		});
 	});
 
-	after(() => {
+	after(async () => {
 		signOut(Auth);
+		await prisma.task.deleteMany();
+		await prisma.project.deleteMany();
 	});
 
 	it("Should return status of 201 upon successful creation of comment", done => {

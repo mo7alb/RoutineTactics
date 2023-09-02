@@ -6,6 +6,35 @@ import Input from "../UI/input";
 
 export default function LoginForm() {
 	const { control, errors, signIn } = useAuth();
+
+	const inputs = [
+		{
+			name: "email",
+			rules: {
+				required: "Email address is required",
+				pattern: {
+					value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+					message:
+						"Email address should be of the form something@example.com",
+				},
+			},
+			secure: false,
+			placeholder: "Email address",
+		},
+		{
+			name: "password",
+			rules: {
+				required: "Password is required",
+				minLength: {
+					value: 6,
+					message: "Password should be at least 6 characters long",
+				},
+			},
+			placeholder: "Password",
+			secure: true,
+		},
+	];
+
 	return (
 		<>
 			<View style={errorStyles.errorContainer}>
@@ -17,39 +46,19 @@ export default function LoginForm() {
 				)}
 			</View>
 			<KeyboardAvoidingView>
-				<Input
-					name="email"
-					control={control}
-					rules={{
-						required: "Email address is required",
-						pattern: {
-							value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-							message:
-								"Email address should be of the form something@example.com",
-						},
-					}}
-					autoCapitalize="none"
-					autoCorrect={false}
-					placeholder="Email address"
-					error={errors.email != null}
-				/>
-				<Input
-					name="password"
-					control={control}
-					rules={{
-						required: "Password is required",
-						minLength: {
-							value: 6,
-							message: "Password should be at least 6 characters long",
-						},
-					}}
-					autoCapitalize="none"
-					autoCorrect={false}
-					placeholder="Password"
-					secureTextEntry={true}
-					error={errors.password != null}
-				/>
-
+				{inputs.map(input => (
+					<Input
+						key={input.name}
+						name={input.name}
+						control={control}
+						rules={input.rules}
+						autoCapitalize="none"
+						autoCorrect={false}
+						placeholder={input.placeholder}
+						secureTextEntry={input.secure}
+						error={errors[input.name] != null}
+					/>
+				))}
 				<Button
 					title="Login"
 					color="#841584"

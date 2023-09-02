@@ -25,7 +25,6 @@ model ProjectMemberNotification {
   id        String @id @default(uuid())
   projectId String
   userId    String
-  sentBy    String
 }
 
 model ProjectMember {

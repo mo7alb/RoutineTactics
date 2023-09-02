@@ -1,20 +1,14 @@
-import { PrismaClient } from "@prisma/client";
-
+import { prisma } from "../../../config/prisma";
 import { expect } from "chai";
 import { before, after, afterEach, beforeEach, describe, it } from "mocha";
-
 import chai from "chai";
 import chaiHttp from "chai-http";
-
 import app from "../../../index";
-
 import admin from "../../../config/firebaseAdminConfig";
 import { signInWithCustomToken, signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
 
 chai.use(chaiHttp);
-
-const prisma = new PrismaClient();
 
 describe("POST /api/projects", () => {
 	const baseURL = "/api/projects";
@@ -27,10 +21,6 @@ describe("POST /api/projects", () => {
 
 	// firebase jwt token
 	let token: string;
-
-	before(async () => {
-		await prisma.$connect();
-	});
 
 	// connect to the database before each test & create jwt token
 	beforeEach(async () => {
@@ -48,10 +38,9 @@ describe("POST /api/projects", () => {
 
 	after(async () => {
 		await prisma.project.deleteMany();
-		await prisma.$disconnect();
 	});
 
-	it("Should return a status of 401 upon unauthorized request", function (done) {
+	it("Should return a status of 401 upon unauthorized request", done => {
 		chai
 			.request(app)
 			.post(baseURL)
@@ -62,7 +51,7 @@ describe("POST /api/projects", () => {
 			});
 	});
 
-	it("Should return a status of 201 upon successful request", function (done) {
+	it("Should return a status of 201 upon successful request", done => {
 		chai
 			.request(app)
 			.post(baseURL)
@@ -74,7 +63,7 @@ describe("POST /api/projects", () => {
 			});
 	});
 
-	it("Should return a status of 400 when no project name is passed", function (done) {
+	it("Should return a status of 400 when no project name is passed", done => {
 		chai
 			.request(app)
 			.post(baseURL)

@@ -1,18 +1,14 @@
-import { PrismaClient, Project } from "@prisma/client";
-
+import { Project } from "@prisma/client";
+import { prisma } from "../../../config/prisma";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { after, before, beforeEach, afterEach, describe, it } from "mocha";
-
 import app from "../../../index";
-
 import { signInWithCustomToken, signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
 import admin from "../../../config/firebaseAdminConfig";
 
 chai.use(chaiHttp);
-
-const prisma = new PrismaClient();
 
 describe("GET /api/tasks", () => {
 	let baseURL: string;
@@ -22,8 +18,6 @@ describe("GET /api/tasks", () => {
 	const mockUser = { uid: "3333" };
 
 	before(async function () {
-		await prisma.$connect();
-
 		project = await prisma.project.create({
 			data: { name: "Linux", userId: mockUser.uid },
 		});
@@ -55,7 +49,6 @@ describe("GET /api/tasks", () => {
 		await prisma.task.deleteMany();
 		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
-		await prisma.$disconnect();
 	});
 
 	it("Should return status code of 200 upon request a task", function (done) {

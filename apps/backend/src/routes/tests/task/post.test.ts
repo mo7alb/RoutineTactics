@@ -1,4 +1,4 @@
-import { PrismaClient, Project } from "@prisma/client";
+import { Project } from "@prisma/client";
 import { expect } from "chai";
 import { after, afterEach, before, beforeEach, describe, it } from "mocha";
 import chai from "chai";
@@ -7,10 +7,9 @@ import app from "../../../index";
 import admin from "../../../config/firebaseAdminConfig";
 import { signInWithCustomToken, signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
+import { prisma } from "../../../config/prisma";
 
 chai.use(chaiHttp);
-
-const prisma = new PrismaClient();
 
 describe("POST /api/tasks/", () => {
 	const baseURL = "/api/tasks/";
@@ -24,7 +23,6 @@ describe("POST /api/tasks/", () => {
 	let project: Project;
 
 	before(async () => {
-		await prisma.$connect();
 		project = await prisma.project.create({
 			data: { name: "Android", userId: mockUser.uid },
 		});
@@ -46,7 +44,6 @@ describe("POST /api/tasks/", () => {
 		await prisma.task.deleteMany();
 		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
-		await prisma.$disconnect();
 	});
 
 	it("Should return a status code of 201 for a successful request", function (done) {

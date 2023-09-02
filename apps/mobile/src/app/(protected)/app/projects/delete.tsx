@@ -1,15 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { Link, Redirect, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import Container from "../../../../components/UI/container";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteProject } from "../../../../api/project";
 import { useAuthContext } from "../../../../context/AuthContext";
+import CloseModal from "../../../../components/UI/modal/CloseModal";
 
 export default function DeleteProject() {
 	const { id } = useLocalSearchParams();
-	const isVisible = router.canGoBack();
 
 	const user = useAuthContext();
 	if (!user) return null;
@@ -29,19 +28,12 @@ export default function DeleteProject() {
 	});
 	const handleDeleteProject = () => {
 		mutation.mutate();
-		router.replace("/dashboard");
+		router.replace("/app/dashboard");
 	};
 
 	return (
 		<Container>
-			{!isVisible && <Link href="../">Dismiss</Link>}
-			<Ionicons
-				name="close"
-				size={32}
-				color="red"
-				onPress={() => router.back()}
-				style={styles.close}
-			/>
+			<CloseModal />
 			<View style={styles.container}>
 				<Text style={styles.title}>Delete Project</Text>
 				<Text style={styles.warning}>
@@ -54,6 +46,7 @@ export default function DeleteProject() {
 		</Container>
 	);
 }
+
 const styles = StyleSheet.create({
 	close: {
 		width: 55,

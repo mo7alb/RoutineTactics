@@ -8,6 +8,9 @@ import { Auth } from "../../config/firebase";
 export default function Settings() {
 	return (
 		<Container title="Settings">
+			<View>
+				<Text>Your account is not verified</Text>
+			</View>
 			<View style={styles.container}>
 				<TouchableOpacity onPress={() => signOut(Auth)} style={styles.btn}>
 					<Text style={styles.btnText}>Log out</Text>

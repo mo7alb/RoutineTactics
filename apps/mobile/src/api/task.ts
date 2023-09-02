@@ -29,7 +29,7 @@ async function updateTask(user: User, taskId: string, task: Task) {
 		},
 		body: JSON.stringify(task),
 	});
-	return await response.json();
+	if (response.status != 204) throw new Error("Unable to update task");
 }
 
 async function deleteTask(user: User, taskId: string) {
@@ -42,19 +42,18 @@ async function deleteTask(user: User, taskId: string) {
 			Authorization: `Bearer ${token}`,
 		},
 	});
-	return await response.json();
+	if (response.status != 204) throw new Error("Unable to delete task");
 }
 
-async function getTask(user: User, task: Task): Promise<Task> {
+async function getTask(user: User, taskId: string): Promise<Task> {
 	const token = await user.getIdToken();
-	const response = await fetch(`${baseURL}/api/tasks`, {
+	const response = await fetch(`${baseURL}/api/tasks/${taskId}`, {
 		method: "GET",
 		headers: {
 			Accept: "application/json",
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${token}`,
 		},
-		body: JSON.stringify(task),
 	});
 	return await response.json();
 }

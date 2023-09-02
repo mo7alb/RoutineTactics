@@ -34,7 +34,7 @@ export default function UpdateProjectForm({ user, project }: Props) {
 
 	const mutation = useMutation({
 		mutationFn: (editedProject: Project) =>
-			editProject(user, project.id, { ...editedProject, categories }),
+			editProject(user, project.id!, { ...editedProject, categories }),
 		onSuccess: () => {
 			queryClient.invalidateQueries(["projects"]);
 			queryClient.invalidateQueries(["project", project.id]);
@@ -49,9 +49,41 @@ export default function UpdateProjectForm({ user, project }: Props) {
 	});
 
 	const submitProjectChanges = handleSubmit(data => {
-		mutation.mutate(data);
+		mutation.mutate(data as Project);
 		router.back();
 	});
+
+	const inputs = [
+		{
+			name: "name",
+			rules: {
+				required: "Name is required",
+				minLength: {
+					value: 3,
+					message: "Name should at least be 3 characters long",
+				},
+				maxLength: {
+					value: 25,
+					message: "Name should be less than 25 characters",
+				},
+			},
+			placeholder: "Project Name",
+		},
+		{
+			name: "description",
+			rules: {
+				minLength: {
+					value: 5,
+					message: "Description should at least be 5 characters long",
+				},
+				maxLength: {
+					value: 100,
+					message: "Description should be less than 100 characters",
+				},
+			},
+			placeholder: "Project Description",
+		},
+	];
 
 	return (
 		<>
@@ -66,40 +98,16 @@ export default function UpdateProjectForm({ user, project }: Props) {
 				)}
 			</View>
 			<KeyboardAvoidingView>
-				<Input
-					name="name"
-					control={control}
-					rules={{
-						required: "Name is required",
-						minLength: {
-							value: 3,
-							message: "Name should at least be 3 characters long",
-						},
-						maxLength: {
-							value: 25,
-							message: "Name should be less than 25 characters",
-						},
-					}}
-					placeholder="Project Name"
-					error={errors.name != null}
-				/>
-				<Input
-					name="description"
-					control={control}
-					rules={{
-						minLength: {
-							value: 5,
-							message:
-								"Description should at least be 5 characters long",
-						},
-						maxLength: {
-							value: 100,
-							message: "Description should be less than 100 characters",
-						},
-					}}
-					placeholder="Project Description"
-					error={errors.description != null}
-				/>
+				{inputs.map(input => (
+					<Input
+						key={input.name}
+						name={input.name}
+						control={control}
+						rules={input.rules}
+						placeholder={input.placeholder}
+						error={errors[input.name] != null}
+					/>
+				))}
 				{/* add date time picker here */}
 				<DatePicker control={control} />
 				<Categories categories={categories} setCategories={setCategories} />

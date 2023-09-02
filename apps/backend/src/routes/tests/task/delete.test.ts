@@ -1,4 +1,4 @@
-import { PrismaClient, Task } from "@prisma/client";
+import { prisma } from "../../../config/prisma";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { after, afterEach, before, beforeEach, describe, it } from "mocha";
@@ -8,7 +8,6 @@ import { Auth } from "../../../config/firebaseConfig";
 import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);
-const prisma = new PrismaClient();
 
 describe("Delete /api/tasks/:id", () => {
 	let baseURL: string;
@@ -19,7 +18,6 @@ describe("Delete /api/tasks/:id", () => {
 	const mockUser = { uid: "555" };
 
 	before(async () => {
-		await prisma.$connect();
 		const project = await prisma.project.create({
 			data: { name: "React", userId: mockUser.uid },
 		});
@@ -46,7 +44,6 @@ describe("Delete /api/tasks/:id", () => {
 
 		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
-		await prisma.$disconnect();
 	});
 
 	it("Should return a status of 204 upon successful task deletion", done => {

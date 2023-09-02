@@ -1,15 +1,16 @@
 import React from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+import { View, Text, StyleSheet } from "react-native";
 import Container from "../../../../components/UI/container";
 import { useLocalSearchParams, Link } from "expo-router";
 import { useAuthContext } from "../../../../context/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { getProject } from "../../../../api/project";
-import { Task } from "../../../../types/task";
 import OpenModal from "../../../../components/UI/modal/OpenModal";
 import TaskList from "../../../../components/TaskList";
+import EditIcon from "../../../../components/UI/editIcon";
+import DeleteIcon from "../../../../components/UI/deleteIcon";
+import { Ionicons } from "@expo/vector-icons";
+import Loading from "../../../../components/UI/loading";
+import Error from "../../../../components/UI/error";
+import { useGetProjectQuery } from "../../../../hooks/useGetProjectQuery";
 
 export default function ProjectDetails() {
 	const { id } = useLocalSearchParams();
@@ -17,77 +18,62 @@ export default function ProjectDetails() {
 	const user = useAuthContext();
 	if (user == null) return <View>Unauthenticated</View>;
 
-	const { data, isError, error, isLoading } = useQuery({
-		queryKey: ["project", id],
-		queryFn: () => getProject(user, id as string),
-	});
+	const { project, isLoading, isError, error } = useGetProjectQuery(
+		user,
+		id as string
+	);
+
+	if (project == null) return null;
 
 	if (isLoading) {
-		return (
-			<Container title="Project Details">
-				<ActivityIndicator />
-			</Container>
-		);
+		return <Loading title="Project Details" />;
 	}
 
 	if (isError) {
-		return (
-			<Container title="Project Details">
-				<Text>
-					{error instanceof Error ? error.message : "an error occured"}
-				</Text>
-			</Container>
-		);
+		return <Error title="Project Details" error={error} />;
 	}
 
 	return (
 		<Container title="Project Details">
+			{/* Opens up a new task form */}
 			<OpenModal
 				path={{ pathname: "/app/tasks/new", params: { id: id as string } }}
 			/>
+			{/* Project details */}
 			<View>
-				<Text>{data.name}</Text>
-				<Text>{data.description}</Text>
-				{data.dueDate != null ? (
-					<Text>{new Date(data.dueDate).toDateString()}</Text>
+				<Text>{project.name}</Text>
+				<Text>{project.description}</Text>
+				{project.dueDate != null ? (
+					<Text>{new Date(project.dueDate).toDateString()}</Text>
 				) : null}
 			</View>
-			{user.uid == data.userId && (
+			{/* display edit and delete buttons for project owner */}
+			{user.uid == project.userId && (
 				<View style={styles.iconContainer}>
-					<Link
-						href={{
+					<Link href={{ pathname: "/app/members/list" }}>
+						<Ionicons
+							name="person-circle-outline"
+							size={24}
+							color="black"
+						/>
+					</Link>
+					<EditIcon
+						path={{
 							pathname: "/app/projects/update",
-							params: { id: data.id },
+							params: { id: project.id! },
 						}}
-					>
-						<Feather
-							name="edit"
-							size={24}
-							color="black"
-							style={styles.edit}
-						/>
-					</Link>
-					<Link
-						href={{
+					/>
+					<DeleteIcon
+						path={{
 							pathname: "/app/projects/delete",
-							params: { id: data.id },
+							params: { id: project.id! },
 						}}
-					>
-						<AntDesign
-							name="delete"
-							size={24}
-							color="black"
-							style={styles.delete}
-						/>
-					</Link>
+					/>
 				</View>
 			)}
 
-			{data.tasks.length != 0 ? (
-				<TaskList tasks={data.tasks} />
-			) : (
-				<Text>No Tasks. Get started by adding new Tasks</Text>
-			)}
+			{/* Display list of tasks */}
+			<TaskList tasks={project.tasks} categories={project.categories} />
 		</Container>
 	);
 }
@@ -100,9 +86,5 @@ const styles = StyleSheet.create({
 		top: 10,
 		right: 10,
 		padding: 10,
-	},
-	edit: {},
-	delete: {
-		borderRadius: 20,
 	},
 });

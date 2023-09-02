@@ -8,20 +8,21 @@ import React from "react";
 import CloseModal from "../../../../components/UI/modal/CloseModal";
 import NewTaskForm from "../../../../components/NewTask";
 import { useLocalSearchParams } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
-import { getProject } from "../../../../api/project";
 import Container from "../../../../components/UI/container";
 import { useAuthContext } from "../../../../context/AuthContext";
-import { User } from "firebase/auth";
+import { useGetProjectQuery } from "../../../../hooks/useGetProjectQuery";
 
 export default function NewTask() {
 	const { id } = useLocalSearchParams();
 	const user = useAuthContext();
+	if (user == null) return;
 
-	const { data, isError, error, isLoading } = useQuery({
-		queryKey: ["project", id],
-		queryFn: () => getProject(user as User, id as string),
-	});
+	const { project, isError, error, isLoading } = useGetProjectQuery(
+		user,
+		id as string
+	);
+
+	if (project == null) return null;
 
 	if (isLoading) {
 		return (
@@ -45,7 +46,7 @@ export default function NewTask() {
 		<SafeAreaView style={styles.container}>
 			<CloseModal />
 			<Text style={styles.title}>New task</Text>
-			<NewTaskForm projectId={data.id!} categories={data.categories} />
+			<NewTaskForm projectId={project.id!} categories={project.categories} />
 		</SafeAreaView>
 	);
 }

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { Link } from "expo-router";
-import LoginForm from "../../components/login/LoginForm";
+import LoginForm from "../../components/Login/LoginForm";
 import Container from "../../components/UI/container";
 
 export default function LoginScreen() {

@@ -1,18 +1,14 @@
-import { PrismaClient, Project } from "@prisma/client";
-
+import { Project } from "@prisma/client";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { after, before, beforeEach, afterEach, describe, it } from "mocha";
-
 import app from "../../../index";
-
 import { signInWithCustomToken, signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
 import admin from "../../../config/firebaseAdminConfig";
+import { prisma } from "../../../config/prisma";
 
 chai.use(chaiHttp);
-
-const prisma = new PrismaClient();
 
 describe("GET /api/projects", () => {
 	let baseURL = "/api/projects";
@@ -26,8 +22,6 @@ describe("GET /api/projects", () => {
 
 	// connect to the database, create a firebase jwt token and create some projects to fetch
 	before(async () => {
-		await prisma.$connect();
-
 		const customSignInToken = await signInWithCustomToken(
 			Auth,
 			await admin.auth().createCustomToken(user.uid)
@@ -51,7 +45,6 @@ describe("GET /api/projects", () => {
 		await signOut(Auth);
 		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
-		await prisma.$disconnect();
 	});
 
 	it("Should return a status of 200 upon successful request", done => {
@@ -88,16 +81,14 @@ describe("GET /api/project/:id", () => {
 	};
 
 	// connect to the database, create a firebase user and jwt token and create a project to fetch
-	before(async function () {
-		await prisma.$connect();
-
+	before(async () => {
 		project = await prisma.project.create({
 			data: { name: "Android", userId: user.uid },
 		});
 		baseURL = `/api/projects/${project.id}`;
 	});
 
-	beforeEach(async function () {
+	beforeEach(async () => {
 		const customSignInToken = await signInWithCustomToken(
 			Auth,
 			await admin.auth().createCustomToken(user.uid)
@@ -105,15 +96,14 @@ describe("GET /api/project/:id", () => {
 		token = await customSignInToken.user.getIdToken();
 	});
 
-	afterEach(function () {
+	afterEach(() => {
 		signOut(Auth);
 	});
 
 	// abort database connection and delete all projects from the database
-	after(async function () {
+	after(async () => {
 		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
-		await prisma.$disconnect();
 	});
 
 	it("Should return a status of 200 when requesting an existing project", done => {

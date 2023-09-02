@@ -33,7 +33,7 @@
 		"test:watch": "mocha --watch --watch-files",
 		"dev": "npx tsc --watch & node --watch dist/src/index.js",
 		"startDb": "docker-compose up -d",
-		"migrateDb": "npx prisma migrate dev --name init",
+		"migrateDb": "npx prisma migrate dev --name init --skip-seed",
 		"stopDb": "docker-compose down"
 	},
 	"prisma": {

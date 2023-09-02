@@ -10,5 +10,5 @@ const config = {
 	appId: process.env.FIREBASE_APP_ID,
 };
 
-const app = initializeApp(config);
+export const app = initializeApp(config);
 export const Auth = getAuth(app);

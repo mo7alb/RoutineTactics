@@ -1,19 +1,14 @@
-// delete a project
-import { PrismaClient, Project } from "@prisma/client";
-
+import { Project } from "@prisma/client";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { after, afterEach, before, beforeEach, describe, it } from "mocha";
-
 import app from "../../../index";
-
 import { signInWithCustomToken, signOut } from "firebase/auth";
 import { Auth } from "../../../config/firebaseConfig";
 import admin from "../../../config/firebaseAdminConfig";
+import { prisma } from "../../../config/prisma";
 
 chai.use(chaiHttp);
-
-const prisma = new PrismaClient();
 
 describe("Delete /api/projects/:id", () => {
 	let baseURL: string;
@@ -28,7 +23,7 @@ describe("Delete /api/projects/:id", () => {
 
 	// connect to the database and create a project to fetch
 	// create a firebase user and jwt token
-	beforeEach(async function () {
+	beforeEach(async () => {
 		project = await prisma.project.create({
 			data: { name: "Android", userId: user.uid },
 		});
@@ -42,20 +37,12 @@ describe("Delete /api/projects/:id", () => {
 		token = await customSignInToken.user.getIdToken();
 	});
 
-	before(async function () {
-		await prisma.$connect();
-	});
-
 	// abort database connection and delete all projects from the database
-	afterEach(async function () {
+	afterEach(async () => {
 		signOut(Auth);
 
 		await prisma.projectMember.deleteMany();
 		await prisma.project.deleteMany();
-	});
-
-	after(async function () {
-		await prisma.$disconnect();
 	});
 
 	it("Should return a status of 204 upon successful project deletion", done => {

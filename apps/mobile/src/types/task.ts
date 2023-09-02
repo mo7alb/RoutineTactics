@@ -1,3 +1,5 @@
+import { TaskComment } from "./comment";
+
 type Task = {
 	id?: string;
 	title: string;
@@ -7,7 +9,7 @@ type Task = {
 	dueDate?: string | Date;
 	completed: boolean;
 	projectId: string;
-	comments: Comment[];
+	comments: TaskComment[];
 	createdById: string;
 	assignedToId?: string;
 };

@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(Authentication.decodeToken);
 
 app.use("/api/projects", ProjectRouter);
+app.use("/api/project-members", ProjectRouter);
 app.use("/api/tasks", TaskRouter);
 app.use("/api/comments", CommentRouter);
 
