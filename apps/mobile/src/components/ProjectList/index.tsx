@@ -4,6 +4,8 @@ import ProjectCard from "./ProjectCard";
 import { useQuery } from "@tanstack/react-query";
 import { getProjects } from "../../api/project";
 import { useAuthContext } from "../../context/AuthContext";
+import Loading from "../UI/loading";
+import Error from "../UI/error";
 
 export default function ProjectList() {
 	const user = useAuthContext();
@@ -14,26 +16,22 @@ export default function ProjectList() {
 		queryFn: () => getProjects(user),
 	});
 
+	if (isLoading) return <Loading />;
+	if (isError) return <Error error={error} />;
+
 	return (
 		<View>
 			<Text style={styles.subtitle}>Projects</Text>
-			{isLoading && <ActivityIndicator />}
-			{!isLoading && isError && error instanceof Error && (
-				<Text>{error.message}</Text>
+
+			{data.length == 0 && (
+				<Text>No projects yet, start by adding a new project</Text>
 			)}
-			{!isLoading && !isError && (
-				<>
-					{data.length == 0 && (
-						<Text>No projects yet, start by adding a new project</Text>
-					)}
-					{data.length !== 0 && (
-						<View style={{ alignItems: "center" }}>
-							{data.map(project => (
-								<ProjectCard key={project.id} project={project} />
-							))}
-						</View>
-					)}
-				</>
+			{data.length !== 0 && (
+				<View style={{ alignItems: "center" }}>
+					{data.map(project => (
+						<ProjectCard key={project.id} project={project} />
+					))}
+				</View>
 			)}
 		</View>
 	);

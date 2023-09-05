@@ -3,7 +3,7 @@ import React from "react";
 import Container from "../container";
 
 type Prop = {
-	title: string;
+	title?: string;
 	error: any;
 };
 

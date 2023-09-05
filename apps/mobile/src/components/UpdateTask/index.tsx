@@ -12,7 +12,7 @@ import Loading from "../UI/loading";
 import Error from "../UI/error";
 import { useAuthContext } from "../../context/AuthContext";
 import { useGetProjectQuery } from "../../hooks/useGetProjectQuery";
-import MultiSelectDropDown from "../MultiSelectDropDown";
+import MultiSelectDropDown from "../UI/MultiSelectDropDown";
 
 type Props = {
 	task: Task;

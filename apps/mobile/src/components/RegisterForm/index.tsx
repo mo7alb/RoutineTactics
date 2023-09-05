@@ -54,7 +54,7 @@ export default function RegisterForm() {
 						rules={input.rules}
 						autoCapitalize="none"
 						autoCorrect={false}
-						placeholder="Password"
+						placeholder={input.placeholder}
 						secureTextEntry={input.secure}
 						error={errors[input.name] != null}
 					/>

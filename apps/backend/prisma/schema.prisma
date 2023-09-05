@@ -7,6 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                  String        @id
+  email               String
+  notificationToken   String
+  invitationsSent     Invitations[] @relation(name: "InvitationSender")
+  invitationsReceived Invitations[] @relation(name: "InvitationUser")
+}
+
 model Project {
   id          String          @id @default(uuid())
   name        String
@@ -21,10 +29,20 @@ model Project {
   @@map("projects")
 }
 
-model ProjectMemberNotification {
-  id        String @id @default(uuid())
+enum InvitationsState {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Invitations {
+  id        Int              @id @default(autoincrement())
   projectId String
+  sender    User             @relation(name: "InvitationSender", fields: [senderId], references: [id])
+  senderId  String
+  user      User             @relation(name: "InvitationUser", fields: [userId], references: [id])
   userId    String
+  status    InvitationsState @default(PENDING)
 }
 
 model ProjectMember {

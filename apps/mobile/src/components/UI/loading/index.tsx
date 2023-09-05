@@ -3,12 +3,12 @@ import React from "react";
 import Container from "../container";
 
 type Prop = {
-	title: string;
+	title?: string;
 };
 
 export default function Loading({ title }: Prop) {
 	return (
-		<Container title={title}>
+		<Container title={title ? title : ""}>
 			<ActivityIndicator />
 		</Container>
 	);

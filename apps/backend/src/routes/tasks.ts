@@ -4,6 +4,7 @@ import { TaskController } from "../controllers";
 const router = express.Router();
 const controller = new TaskController();
 
+router.get("/", controller.getTasks);
 router.post("/", controller.createTask);
 router.get("/:id", controller.getTask);
 router.put("/:id", controller.updateTask);

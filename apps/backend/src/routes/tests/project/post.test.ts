@@ -1,12 +1,11 @@
-import { prisma } from "../../../config/prisma";
-import { expect } from "chai";
-import { before, after, afterEach, beforeEach, describe, it } from "mocha";
-import chai from "chai";
+import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import app from "../../../index";
-import admin from "../../../config/firebaseAdminConfig";
-import { signInWithCustomToken, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { after, afterEach, beforeEach, describe, it } from "mocha";
 import { Auth } from "../../../config/firebaseConfig";
+import { prisma } from "../../../config/prisma";
+import app from "../../../index";
+import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);
 
@@ -24,11 +23,7 @@ describe("POST /api/projects", () => {
 
 	// connect to the database before each test & create jwt token
 	beforeEach(async () => {
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
+		token = await signInToken(user.uid);
 	});
 
 	// disconnect the database connection after each test
@@ -45,7 +40,8 @@ describe("POST /api/projects", () => {
 			.request(app)
 			.post(baseURL)
 			.send({})
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(401);
 				done();
 			});
@@ -57,7 +53,8 @@ describe("POST /api/projects", () => {
 			.post(baseURL)
 			.send({ name: "React" })
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(201);
 				done();
 			});
@@ -69,7 +66,8 @@ describe("POST /api/projects", () => {
 			.post(baseURL)
 			.send({})
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(400);
 				done();
 			});

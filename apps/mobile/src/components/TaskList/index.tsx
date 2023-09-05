@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, Text, ScrollView, StyleSheet } from "react-native";
 import TaskCard from "./Card";
 import { Task } from "../../types/task";
+import Dropdown from "../UI/DropDown";
 
 type Props = {
 	tasks: Task[];
@@ -11,12 +12,6 @@ type Props = {
 export default function TaskList({ tasks, categories }: Props) {
 	const [tasksToDisplay, setTasksToDisplay] = useState<Task[]>([]);
 	const [label, setLabel] = useState("pending");
-	const [labels, setLabels] = useState<string[]>([
-		"all",
-		"pending",
-		"completed",
-		...categories,
-	]);
 
 	useEffect(() => {
 		if (label === "all") {
@@ -34,6 +29,12 @@ export default function TaskList({ tasks, categories }: Props) {
 
 	return (
 		<>
+			<Dropdown
+				options={["all", "pending", "completed", ...categories]}
+				label="Select Label"
+				selected={label}
+				setSelected={setLabel}
+			/>
 			<ScrollView style={styles.container}>
 				{tasksToDisplay.length == 0 && (
 					<Text>No Tasks. Get started by adding new Tasks</Text>

@@ -64,7 +64,7 @@ class ProjectController {
 		try {
 			const project = await prisma.project.findUnique({
 				where: { id },
-				include: { tasks: true, members: { select: { userId: true } } },
+				include: { tasks: true },
 			});
 
 			if (project == null) return response.sendStatus(404);
@@ -118,12 +118,13 @@ class ProjectController {
 		// @ts-ignore
 		const user: User = request.user;
 		try {
-			const project = await prisma.project.findUnique({ where: { id } });
+			const project = await prisma.project.findUnique({
+				where: { id },
+			});
 			if (project == null) return response.sendStatus(404);
 
 			if (project.userId !== user.uid) return response.sendStatus(403);
 
-			await prisma.projectMember.deleteMany({ where: { projectId: id } });
 			await prisma.project.delete({ where: { id } });
 			return response.sendStatus(204);
 		} catch (error) {

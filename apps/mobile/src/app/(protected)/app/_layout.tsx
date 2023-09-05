@@ -34,7 +34,7 @@ export default function AppLayout() {
 				options={{ presentation: "modal", headerShown: false }}
 			/>
 			<Stack.Screen
-				name="members/list"
+				name="members/index"
 				options={{ presentation: "modal", headerShown: false }}
 			/>
 		</Stack>

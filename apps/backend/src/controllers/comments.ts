@@ -53,11 +53,11 @@ class CommentController {
 		// @ts-ignore
 		const user: User = request.user;
 
-		const { _comment } = request.body;
-		if (_comment == undefined) return response.sendStatus(400);
+		const { comment } = request.body;
+		if (comment == undefined) return response.sendStatus(400);
 
 		try {
-			const comment = await prisma.comment.findUnique({
+			const _comment = await prisma.comment.findUnique({
 				where: { id },
 				include: {
 					task: {
@@ -69,18 +69,18 @@ class CommentController {
 				},
 			});
 
-			if (!comment) return response.sendStatus(404);
+			if (!_comment) return response.sendStatus(404);
 			if (
-				comment.userId !== user.uid &&
-				comment.task.createdById !== user.uid &&
-				comment.task.project.userId !== user.uid
+				_comment.userId !== user.uid &&
+				_comment.task.createdById !== user.uid &&
+				_comment.task.project.userId !== user.uid
 			) {
 				return response.sendStatus(403);
 			}
 
 			await prisma.comment.update({
 				where: { id },
-				data: { comment: _comment },
+				data: { comment },
 			});
 
 			return response.sendStatus(204);

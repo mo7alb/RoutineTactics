@@ -1,10 +1,10 @@
-import { prisma } from "../../../config/prisma";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { after, afterEach, before, beforeEach, describe, it } from "mocha";
-import app from "../../../index";
 import { signOut } from "firebase/auth";
+import { after, before, beforeEach, describe, it } from "mocha";
 import { Auth } from "../../../config/firebaseConfig";
+import { prisma } from "../../../config/prisma";
+import app from "../../../index";
 import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);

@@ -50,7 +50,12 @@ export default function ProjectDetails() {
 			{/* display edit and delete buttons for project owner */}
 			{user.uid == project.userId && (
 				<View style={styles.iconContainer}>
-					<Link href={{ pathname: "/app/members/list" }}>
+					<Link
+						href={{
+							pathname: "/app/members",
+							params: { id: project.id! },
+						}}
+					>
 						<Ionicons
 							name="person-circle-outline"
 							size={24}

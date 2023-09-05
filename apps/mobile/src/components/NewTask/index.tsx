@@ -16,7 +16,7 @@ import { errorStyles } from "../styles/error";
 import Input from "../UI/input";
 import DatePicker from "../UI/datePicker";
 import { router } from "expo-router";
-import MultiSelectDropDown from "../MultiSelectDropDown";
+import MultiSelectDropDown from "../UI/MultiSelectDropDown";
 
 type Props = {
 	projectId: string;

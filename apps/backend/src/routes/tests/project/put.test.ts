@@ -1,11 +1,11 @@
-import { prisma } from "../../../config/prisma";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { before, after, afterEach, beforeEach, describe, it } from "mocha";
-import app from "../../../index";
-import { signInWithCustomToken, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { after, afterEach, before, beforeEach, describe, it } from "mocha";
 import { Auth } from "../../../config/firebaseConfig";
-import admin from "../../../config/firebaseAdminConfig";
+import { prisma } from "../../../config/prisma";
+import app from "../../../index";
+import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);
 
@@ -28,11 +28,7 @@ describe("PUT /api/projects/:id", () => {
 	});
 
 	beforeEach(async () => {
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
+		token = await signInToken(user.uid);
 	});
 
 	// abort database connection and delete all projects from the database
@@ -88,11 +84,8 @@ describe("PUT /api/projects/:id", () => {
 			email: "test2@test.io",
 			uid: "55555",
 		};
-		const customToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(invalidUser.uid)
-		);
-		const newToken = await customToken.user.getIdToken();
+
+		const newToken = await signInToken(invalidUser.uid);
 
 		chai
 			.request(app)

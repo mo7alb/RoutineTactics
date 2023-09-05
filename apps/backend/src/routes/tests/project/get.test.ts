@@ -1,12 +1,12 @@
 import { Project } from "@prisma/client";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { after, before, beforeEach, afterEach, describe, it } from "mocha";
-import app from "../../../index";
-import { signInWithCustomToken, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { after, afterEach, before, beforeEach, describe, it } from "mocha";
 import { Auth } from "../../../config/firebaseConfig";
-import admin from "../../../config/firebaseAdminConfig";
 import { prisma } from "../../../config/prisma";
+import app from "../../../index";
+import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);
 
@@ -22,11 +22,7 @@ describe("GET /api/projects", () => {
 
 	// connect to the database, create a firebase jwt token and create some projects to fetch
 	before(async () => {
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
+		token = await signInToken(user.uid);
 
 		await prisma.project.createMany({
 			data: [
@@ -52,7 +48,8 @@ describe("GET /api/projects", () => {
 			.request(app)
 			.get(baseURL)
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(200);
 				done();
 			});
@@ -62,14 +59,15 @@ describe("GET /api/projects", () => {
 		chai
 			.request(app)
 			.get(baseURL)
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(401);
 				done();
 			});
 	});
 });
 
-describe("GET /api/project/:id", () => {
+describe("GET /api/projects/:id", () => {
 	let project: Project;
 	let baseURL: string;
 	let token: string;
@@ -89,11 +87,7 @@ describe("GET /api/project/:id", () => {
 	});
 
 	beforeEach(async () => {
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
+		token = await signInToken(user.uid);
 	});
 
 	afterEach(() => {
@@ -102,8 +96,11 @@ describe("GET /api/project/:id", () => {
 
 	// abort database connection and delete all projects from the database
 	after(async () => {
-		await prisma.projectMember.deleteMany();
-		await prisma.project.deleteMany();
+		try {
+			await prisma.project.deleteMany();
+		} catch (error) {
+			console.log(error);
+		}
 	});
 
 	it("Should return a status of 200 when requesting an existing project", done => {
@@ -111,7 +108,8 @@ describe("GET /api/project/:id", () => {
 			.request(app)
 			.get(baseURL)
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(200);
 				done();
 			});
@@ -120,29 +118,26 @@ describe("GET /api/project/:id", () => {
 	it("Should return a status of 200 when a user member requests for an existing project", async () => {
 		signOut(Auth);
 		const newUser = { uid: "5555" };
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(newUser.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
+
+		token = await signInToken(newUser.uid);
 		await prisma.projectMember.create({
 			data: { projectId: project.id, userId: newUser.uid },
 		});
 
-		chai
+		const response = await chai
 			.request(app)
 			.get(baseURL)
-			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
-				expect(response).to.have.status(200);
-			});
+			.set({ Authorization: `Bearer ${token}` });
+
+		expect(response).to.have.status(200);
 	});
 
 	it("Should return a status of 401 when unauthorized", done => {
 		chai
 			.request(app)
 			.get(baseURL)
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(401);
 				done();
 			});
@@ -153,7 +148,8 @@ describe("GET /api/project/:id", () => {
 			.request(app)
 			.get("/api/projects/test")
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(404);
 				done();
 			});
@@ -168,18 +164,14 @@ describe("GET /api/project/:id", () => {
 			email: "test2@test.io",
 			uid: "55555",
 		};
-		const customToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(invalidUser.uid)
-		);
-		const newToken = await customToken.user.getIdToken();
 
-		chai
+		const newToken = await signInToken(invalidUser.uid);
+
+		const response = await chai
 			.request(app)
 			.get(baseURL)
-			.set({ Authorization: `Bearer ${newToken}` })
-			.end((_, response) => {
-				expect(response).to.have.status(403);
-			});
+			.set({ Authorization: `Bearer ${newToken}` });
+
+		expect(response).to.have.status(403);
 	});
 });

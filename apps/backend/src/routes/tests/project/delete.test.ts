@@ -1,12 +1,12 @@
 import { Project } from "@prisma/client";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-import { after, afterEach, before, beforeEach, describe, it } from "mocha";
-import app from "../../../index";
-import { signInWithCustomToken, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { afterEach, beforeEach, describe, it } from "mocha";
 import { Auth } from "../../../config/firebaseConfig";
-import admin from "../../../config/firebaseAdminConfig";
 import { prisma } from "../../../config/prisma";
+import app from "../../../index";
+import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);
 
@@ -30,11 +30,7 @@ describe("Delete /api/projects/:id", () => {
 
 		baseURL = `/api/projects/${project.id}`;
 
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
+		token = await signInToken(user.uid);
 	});
 
 	// abort database connection and delete all projects from the database
@@ -50,7 +46,8 @@ describe("Delete /api/projects/:id", () => {
 			.request(app)
 			.delete(baseURL)
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(204);
 				done();
 			});
@@ -68,7 +65,8 @@ describe("Delete /api/projects/:id", () => {
 			.request(app)
 			.delete(baseURL)
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(204);
 			});
 	});
@@ -78,7 +76,8 @@ describe("Delete /api/projects/:id", () => {
 			.request(app)
 			.delete(`${baseURL}1234`)
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(404);
 				done();
 			});
@@ -93,17 +92,15 @@ describe("Delete /api/projects/:id", () => {
 			email: "test2@test.io",
 			uid: "15151515",
 		};
-		const customToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(invalidUser.uid)
-		);
-		const newToken = await customToken.user.getIdToken();
+
+		const newToken = await signInToken(invalidUser.uid);
 
 		chai
 			.request(app)
 			.delete(baseURL)
 			.set({ Authorization: `Bearer ${newToken}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(403);
 			});
 	});

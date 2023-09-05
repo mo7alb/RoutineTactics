@@ -51,6 +51,35 @@ class TaskController {
 		}
 	}
 
+	async getTasks(request: Request, response: Response) {
+		// @ts-ignore
+		const user: User = request.user;
+		try {
+			const projects = await prisma.project.findMany({
+				where: { userId: user.uid },
+				include: { tasks: true },
+			});
+
+			const members = await prisma.projectMember.findMany({
+				where: { userId: user.uid },
+				include: { project: { select: { tasks: true } } },
+			});
+
+			let tasksList = projects.map(project => project.tasks);
+
+			tasksList = tasksList.concat(
+				members.map(member => member.project.tasks)
+			);
+
+			const tasks = tasksList.flat();
+
+			return response.status(200).json(tasks);
+		} catch (error) {
+			console.log(error);
+			return response.sendStatus(500);
+		}
+	}
+
 	async getTask(request: Request, response: Response) {
 		const id = request.params.id;
 		// @ts-ignore
