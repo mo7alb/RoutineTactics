@@ -3,6 +3,9 @@ import { useContext, createContext, useState, useEffect } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { Auth } from "../config/firebase";
 
+/**
+ * This context stores the user and provides it to the entire application
+ */
 const AuthContext = createContext<User | null>(null);
 
 type ProviderProps = {

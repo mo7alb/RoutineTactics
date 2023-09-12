@@ -10,9 +10,11 @@ datasource db {
 model User {
   id                  String        @id
   email               String
-  notificationToken   String
+  notificationToken   String?
   invitationsSent     Invitations[] @relation(name: "InvitationSender")
   invitationsReceived Invitations[] @relation(name: "InvitationUser")
+  createdTasks        Task[]        @relation(name: "created")
+  assignedTasks       Task[]        @relation(name: "assigned")
 }
 
 model Project {
@@ -25,6 +27,7 @@ model Project {
   categories  String[]
   members     ProjectMember[]
   tasks       Task[]
+  Invitations Invitations[]
 
   @@map("projects")
 }
@@ -36,13 +39,14 @@ enum InvitationsState {
 }
 
 model Invitations {
-  id        Int              @id @default(autoincrement())
-  projectId String
-  sender    User             @relation(name: "InvitationSender", fields: [senderId], references: [id])
+  id        String           @id @default(uuid())
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sender    User             @relation(name: "InvitationSender", fields: [senderId], references: [id], onDelete: Cascade)
   senderId  String
-  user      User             @relation(name: "InvitationUser", fields: [userId], references: [id])
+  user      User             @relation(name: "InvitationUser", fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   status    InvitationsState @default(PENDING)
+  projectId String
 }
 
 model ProjectMember {
@@ -70,10 +74,12 @@ model Task {
   comments Comment[]
 
   // User who created the task
+  createdBy   User   @relation(fields: [createdById], references: [id], name: "created")
   createdById String
 
   // User that the task is assigned to
   assignedToId String?
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id], name: "assigned")
 
   @@map("tasks")
 }

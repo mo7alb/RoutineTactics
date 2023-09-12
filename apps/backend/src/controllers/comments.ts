@@ -2,7 +2,58 @@ import { Request, Response } from "express";
 import { User } from "firebase/auth";
 import { prisma } from "../config/prisma";
 
+/**
+ * A controller class for all comment related tasks
+ */
 class CommentController {
+	/**
+	 * Queries database for a single comment and responds with it
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
+	async getComment(request: Request, response: Response) {
+		// @ts-ignore
+		const user: User = request.user;
+
+		const { id } = request.params;
+
+		try {
+			const comment = await prisma.comment.findUnique({
+				where: { id },
+				include: {
+					task: {
+						select: {
+							id: true,
+							createdById: true,
+							project: { select: { userId: true } },
+						},
+					},
+				},
+			});
+
+			if (comment == null) return response.sendStatus(404);
+
+			if (
+				user.uid !== comment.userId &&
+				user.uid !== comment.task.createdById &&
+				comment.task.project.userId !== user.uid
+			)
+				return response.sendStatus(403);
+
+			return response.status(200).json(comment);
+		} catch (error) {
+			console.error(error);
+			return response.sendStatus(500);
+		}
+	}
+
+	/**
+	 * Makes changes to the database by adding a new comment
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async createComment(request: Request, response: Response) {
 		const { comment, taskId } = request.body;
 
@@ -48,6 +99,12 @@ class CommentController {
 		}
 	}
 
+	/**
+	 * Makes changes to the database by editing an existing comment
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async updateComment(request: Request, response: Response) {
 		const id = request.params.id;
 		// @ts-ignore
@@ -90,6 +147,12 @@ class CommentController {
 		}
 	}
 
+	/**
+	 * Makes changes to the database by deleting an existing comment
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async deleteComment(request: Request, response: Response) {
 		const id = request.params.id;
 		// @ts-ignore

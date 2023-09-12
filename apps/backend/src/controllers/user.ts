@@ -3,6 +3,12 @@ import { User } from "firebase/auth";
 import { prisma } from "../config/prisma";
 
 class UserController {
+	/**
+	 * Updates database by creating a new user
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async createUser(request: Request, response: Response) {
 		// @ts-ignore
 		const user: User = request.user;
@@ -19,11 +25,18 @@ class UserController {
 			});
 
 			return response.sendStatus(204);
-		} catch {
+		} catch (error) {
+			console.log(error);
 			return response.sendStatus(500);
 		}
 	}
 
+	/**
+	 * Updates database by updating a existing user
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async updateToken(request: Request, response: Response) {
 		// @ts-ignore
 		const user: User = request.user;

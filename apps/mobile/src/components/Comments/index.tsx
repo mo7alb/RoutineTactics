@@ -1,74 +1,69 @@
 import React from "react";
-import { View, Text, StyleSheet, Dimensions, FlatList } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useAuthContext } from "../../context/authContext";
 import { TaskComment } from "../../types/comment";
-import CommentForm from "./Form";
-import { useAuthContext } from "../../context/AuthContext";
+import EditableComment from "./EditableComment";
+import NewComment from "./NewComment";
+import Comment from "./Comment";
 
 type Props = {
 	comments: TaskComment[];
 	taskId: string;
 };
 
+/**
+ * A react component that renders all comments on a task and allows users to make comments
+ * @component
+ */
 export default function Comments({ comments, taskId }: Props) {
 	const user = useAuthContext();
-	if (user == null) return null;
+	if (!user) return null;
 
 	return (
-		<View>
-			<Text>Comments</Text>
-			<View style={styles.container}>
-				{comments.length === 0 && (
-					<View>
-						<Text>No comments yet</Text>
-					</View>
-				)}
-				{comments.length !== 0 && (
+		<View style={styles.container}>
+			<Text style={styles.title}>Comments</Text>
+			{comments.length === 0 && (
+				<View>
+					<Text>No comments yet</Text>
+				</View>
+			)}
+			{comments.length !== 0 && (
+				<View style={styles.wrapper}>
 					<FlatList
 						data={comments}
-						renderItem={({ item: comment }) => {
-							return (
-								<View style={styles.commentContainer}>
-									<Text
-										adjustsFontSizeToFit
-										style={[
-											styles.comment,
-											user.uid === comment.userId
-												? styles.commentRight
-												: styles.commentLeft,
-										]}
-									>
-										{comment.comment}
-									</Text>
-								</View>
-							);
-						}}
-					></FlatList>
-				)}
-			</View>
-			<CommentForm taskId={taskId} />
+						renderItem={({ item: comment }) =>
+							user.uid === comment.userId ? (
+								<EditableComment comment={comment} />
+							) : (
+								<Comment
+									comment={comment}
+									commentStyles={styles.commentLeft}
+								/>
+							)
+						}
+					/>
+				</View>
+			)}
+			<NewComment taskId={taskId} />
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
-		height: Dimensions.get("window").height * 0.62,
+		marginTop: 15,
+		padding: 5,
 	},
-	commentContainer: {
-		marginHorizontal: 4,
-		marginVertical: 5,
+	title: {
+		fontSize: 18,
+		textAlign: "center",
+		marginBottom: 15,
 	},
-	comment: {
-		paddingVertical: 5,
-		paddingHorizontal: 15,
+	wrapper: {
+		height: "63%",
 	},
 	commentLeft: {
 		backgroundColor: "#008169",
 		textAlign: "left",
-	},
-	commentRight: {
-		color: "white",
-		backgroundColor: "#345A4D",
-		textAlign: "right",
 	},
 });

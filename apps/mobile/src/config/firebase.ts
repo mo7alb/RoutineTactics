@@ -11,6 +11,10 @@ const firebaseConfig = {
 	appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
+/**
+ * A new firebase app is initialize and async storage is used to store the credentials of the user
+ */
+
 const app = initializeApp(firebaseConfig);
 export const Auth = initializeAuth(app, {
 	persistence: getReactNativePersistence(ReactNativeAsyncStorage),

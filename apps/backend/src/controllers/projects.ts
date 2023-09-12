@@ -3,7 +3,16 @@ import { prisma } from "../config/prisma";
 import { User } from "firebase/auth";
 import { Project } from "@prisma/client";
 
+/**
+ * Controller for all project related tasks and operations
+ */
 class ProjectController {
+	/**
+	 * Makes changes to the database by creating a new project
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	public async createProject(request: Request, response: Response) {
 		const body = request.body;
 
@@ -32,6 +41,12 @@ class ProjectController {
 		}
 	}
 
+	/**
+	 * Queries the database and returns a list of projects
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	public async getProjects(request: Request, response: Response) {
 		// @ts-ignore
 		const uid = request.user.uid;
@@ -56,6 +71,12 @@ class ProjectController {
 		}
 	}
 
+	/**
+	 * Queries the database and returns a single project
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	public async getProject(request: Request, response: Response) {
 		const id = request.params.id;
 		// @ts-ignore
@@ -64,7 +85,7 @@ class ProjectController {
 		try {
 			const project = await prisma.project.findUnique({
 				where: { id },
-				include: { tasks: true },
+				include: { tasks: true, members: true },
 			});
 
 			if (project == null) return response.sendStatus(404);
@@ -83,6 +104,12 @@ class ProjectController {
 		}
 	}
 
+	/**
+	 * Makes changes to the database by updating an existing project
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	public async updateProject(request: Request, response: Response) {
 		const id = request.params.id;
 
@@ -113,6 +140,12 @@ class ProjectController {
 		}
 	}
 
+	/**
+	 * Makes changes to the database by deleting an existing project
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	public async deleteProject(request: Request, response: Response) {
 		const id = request.params.id;
 		// @ts-ignore

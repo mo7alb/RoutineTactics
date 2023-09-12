@@ -1,13 +1,17 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
 	Slot,
 	useRootNavigationState,
 	useRouter,
 	useSegments,
 } from "expo-router";
-import AuthProvider, { useAuthContext } from "../context/AuthContext";
-import { useEffect } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { useEffect } from "react";
+import AuthProvider, { useAuthContext } from "../context/authContext";
 
+/**
+ * A react component that authenticates users and redirects them to the correct page
+ * @component
+ */
 function AppStack() {
 	const user = useAuthContext();
 	const router = useRouter();
@@ -18,7 +22,7 @@ function AppStack() {
 		if (!navigationState?.key) return;
 		const inPublicRoute = segments[0] === "(public)";
 
-		if (user != null && !inPublicRoute) router.push("/(protected)/app");
+		if (user != null && !inPublicRoute) router.push("/(protected)/dashboard");
 
 		if (user == null) router.replace("/");
 	}, [user]);
@@ -28,6 +32,10 @@ function AppStack() {
 
 const queryClient = new QueryClient();
 
+/**
+ * A layout that provides user and tanstack query provider to the whole app
+ * @component
+ */
 export default function RootLayout() {
 	return (
 		<AuthProvider>

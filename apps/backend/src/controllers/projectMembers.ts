@@ -3,16 +3,30 @@ import { prisma } from "../config/prisma";
 import admin from "../config/firebaseAdminConfig";
 import { User } from "firebase/auth";
 
+/**
+ * Controller for project member related tasks
+ */
 class ProjectMembersController {
-	// route to delete a member
+	/**
+	 * Makes changes to the database by deleting a project member
+	 * It can either be the project owner deleting an member or a member leaving
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	public async deleteProjectMember(request: Request, response: Response) {
 		// @ts-ignore
 		const user: User = request.user;
 
 		const { id } = request.params;
+		const { userId } = request.body;
+
 		try {
-			const membership = await prisma.projectMember.findUnique({
-				where: { id },
+			const membership = await prisma.projectMember.findFirst({
+				where: {
+					projectId: id,
+					userId: userId == undefined ? user.uid : userId,
+				},
 			});
 
 			if (membership == null) return response.sendStatus(404);
@@ -31,7 +45,12 @@ class ProjectMembersController {
 		}
 	}
 
-	// route to response with a list of project members
+	/**
+	 * Queries database for a list of project members for a given project
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	public async getProjectMembers(request: Request, response: Response) {
 		// @ts-ignore
 		const user = request.user;
@@ -47,9 +66,10 @@ class ProjectMembersController {
 
 			if (
 				project.userId !== user.uid &&
-				project.members.indexOf(user.uid) === -1
-			)
+				project.members.every(member => member.userId !== user.uid)
+			) {
 				return response.sendStatus(403);
+			}
 
 			const userIdentifiers = [
 				{ uid: project.userId },

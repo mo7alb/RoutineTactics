@@ -5,6 +5,7 @@ const router = express.Router();
 
 const controller = new ProjectController();
 
+// mapping different routes to different project controllers
 router.post("/", controller.createProject);
 router.get("/", controller.getProjects);
 router.get("/:id", controller.getProject);
