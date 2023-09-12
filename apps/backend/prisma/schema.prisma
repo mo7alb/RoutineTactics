@@ -7,21 +7,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                  String        @id
+  email               String
+  notificationToken   String?
+  invitationsSent     Invitations[] @relation(name: "InvitationSender")
+  invitationsReceived Invitations[] @relation(name: "InvitationUser")
+  createdTasks        Task[]        @relation(name: "created")
+  assignedTasks       Task[]        @relation(name: "assigned")
+}
+
 model Project {
-  id             String          @id @default(uuid())
-  name           String
-  description    String?
-  createdAt      DateTime        @default(now())
-  dueDate        DateTime?
-  userId         String
-  categories     String[]
-  ProjectMembers ProjectMember[]
-  Task           Task[]
+  id          String          @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime        @default(now())
+  dueDate     DateTime?
+  userId      String
+  categories  String[]
+  members     ProjectMember[]
+  tasks       Task[]
+  Invitations Invitations[]
 
   @@map("projects")
 }
 
-// create a table for Users and Project combination called members
+enum InvitationsState {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Invitations {
+  id        String           @id @default(uuid())
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sender    User             @relation(name: "InvitationSender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId  String
+  user      User             @relation(name: "InvitationUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  status    InvitationsState @default(PENDING)
+  projectId String
+}
+
 model ProjectMember {
   id        String  @id @default(uuid())
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -44,13 +71,15 @@ model Task {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   // list of comments the task has
-  Comment Comment[]
+  comments Comment[]
 
   // User who created the task
+  createdBy   User   @relation(fields: [createdById], references: [id], name: "created")
   createdById String
 
   // User that the task is assigned to
   assignedToId String?
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id], name: "assigned")
 
   @@map("tasks")
 }

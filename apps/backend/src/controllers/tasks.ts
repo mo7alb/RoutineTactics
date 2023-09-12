@@ -3,6 +3,12 @@ import { prisma } from "../config/prisma";
 import { User } from "firebase/auth";
 
 class TaskController {
+	/**
+	 * Makes changes to the database by creating a new Task
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async createTask(request: Request, response: Response) {
 		const { title, description, labels, dueDate, projectId } = request.body;
 		// @ts-ignore
@@ -51,6 +57,49 @@ class TaskController {
 		}
 	}
 
+	/**
+	 * Queries database for a list of tasks
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
+	async getTasks(request: Request, response: Response) {
+		// @ts-ignore
+		const user: User = request.user;
+		try {
+			const projects = await prisma.project.findMany({
+				where: { userId: user.uid },
+				include: { tasks: true },
+			});
+
+			const members = await prisma.projectMember.findMany({
+				where: { userId: user.uid },
+				include: { project: { select: { tasks: true } } },
+			});
+
+			let tasksList = projects.map(project => project.tasks);
+
+			tasksList = tasksList.concat(
+				members.map(member => member.project.tasks)
+			);
+
+			let tasks = tasksList.flat();
+
+			tasks = tasks.filter(task => !task.completed);
+
+			return response.status(200).json(tasks);
+		} catch (error) {
+			console.log(error);
+			return response.sendStatus(500);
+		}
+	}
+
+	/**
+	 * Queries database for a single task
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async getTask(request: Request, response: Response) {
 		const id = request.params.id;
 		// @ts-ignore
@@ -65,7 +114,8 @@ class TaskController {
 							userId: true,
 						},
 					},
-					Comment: true,
+					comments: true,
+					assignedTo: true,
 				},
 			});
 
@@ -85,12 +135,19 @@ class TaskController {
 		}
 	}
 
+	/**
+	 * Makes changes to the database by updating an existing task
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async updateTask(request: Request, response: Response) {
 		const id = request.params.id;
 		// @ts-ignore
 		const user: User = request.user;
 
-		const { title, description, labels, dueDate, completed } = request.body;
+		const { title, description, labels, dueDate, completed, assignedToId } =
+			request.body;
 
 		if (Object.keys(request.body).length === 0 || title == undefined)
 			return response.sendStatus(400);
@@ -102,7 +159,7 @@ class TaskController {
 					project: {
 						select: {
 							userId: true,
-							ProjectMembers: { select: { userId: true } },
+							members: { select: { userId: true } },
 						},
 					},
 				},
@@ -113,15 +170,20 @@ class TaskController {
 			if (
 				task.createdById !== user.uid &&
 				task.project.userId !== user.uid &&
-				task.project.ProjectMembers.every(
-					member => member.userId !== user.uid
-				)
+				task.project.members.every(member => member.userId !== user.uid)
 			)
 				return response.sendStatus(403);
 
 			await prisma.task.update({
 				where: { id },
-				data: { title, description, labels, dueDate, completed },
+				data: {
+					title,
+					description,
+					labels,
+					dueDate,
+					completed,
+					assignedToId,
+				},
 			});
 			return response.sendStatus(204);
 		} catch (error) {
@@ -130,6 +192,12 @@ class TaskController {
 		}
 	}
 
+	/**
+	 * Makes changes to the database by deleting an existing task
+	 * @param request Express request object
+	 * @param response Express response object
+	 * @returns Express response
+	 */
 	async deleteTask(request: Request, response: Response) {
 		const id = request.params.id;
 		// @ts-ignore
@@ -142,7 +210,7 @@ class TaskController {
 					project: {
 						select: {
 							userId: true,
-							ProjectMembers: { select: { userId: true } },
+							members: { select: { userId: true } },
 						},
 					},
 				},

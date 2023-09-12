@@ -1,20 +1,13 @@
-import { PrismaClient } from "@prisma/client";
-
-import { expect } from "chai";
-import { before, after, afterEach, beforeEach, describe, it } from "mocha";
-
-import chai from "chai";
+import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
-
-import app from "../../../index";
-
-import admin from "../../../config/firebaseAdminConfig";
-import { signInWithCustomToken, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { after, afterEach, beforeEach, describe, it } from "mocha";
 import { Auth } from "../../../config/firebaseConfig";
+import { prisma } from "../../../config/prisma";
+import app from "../../../index";
+import { signInToken } from "../../../lib/signInToken";
 
 chai.use(chaiHttp);
-
-const prisma = new PrismaClient();
 
 describe("POST /api/projects", () => {
 	const baseURL = "/api/projects";
@@ -28,17 +21,9 @@ describe("POST /api/projects", () => {
 	// firebase jwt token
 	let token: string;
 
-	before(async () => {
-		await prisma.$connect();
-	});
-
 	// connect to the database before each test & create jwt token
 	beforeEach(async () => {
-		const customSignInToken = await signInWithCustomToken(
-			Auth,
-			await admin.auth().createCustomToken(user.uid)
-		);
-		token = await customSignInToken.user.getIdToken();
+		token = await signInToken(user.uid);
 	});
 
 	// disconnect the database connection after each test
@@ -48,39 +33,41 @@ describe("POST /api/projects", () => {
 
 	after(async () => {
 		await prisma.project.deleteMany();
-		await prisma.$disconnect();
 	});
 
-	it("Should return a status of 401 upon unauthorized request", function (done) {
+	it("Should return a status of 401 upon unauthorized request", done => {
 		chai
 			.request(app)
 			.post(baseURL)
 			.send({})
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(401);
 				done();
 			});
 	});
 
-	it("Should return a status of 201 upon successful request", function (done) {
+	it("Should return a status of 201 upon successful request", done => {
 		chai
 			.request(app)
 			.post(baseURL)
 			.send({ name: "React" })
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(201);
 				done();
 			});
 	});
 
-	it("Should return a status of 400 when no project name is passed", function (done) {
+	it("Should return a status of 400 when no project name is passed", done => {
 		chai
 			.request(app)
 			.post(baseURL)
 			.send({})
 			.set({ Authorization: `Bearer ${token}` })
-			.end((_, response) => {
+			.end((error, response) => {
+				expect(error).to.be.null;
 				expect(response).to.have.status(400);
 				done();
 			});

@@ -1,33 +1,35 @@
 {
 	"expo": {
-		"name": "mobile",
-		"slug": "routinetactics/mobile",
+		"name": "routinetactics",
+		"slug": "com.routine-tactics",
 		"version": "1.0.0",
 		"orientation": "portrait",
-		"icon": "./assets/icon.png",
-		"userInterfaceStyle": "light",
-		"schema": "routinetactics",
+		"icon": "./assets/images/icon.png",
+		"scheme": "myapp",
+		"userInterfaceStyle": "automatic",
 		"splash": {
-			"image": "./assets/splash.png",
+			"image": "./assets/images/splash.png",
 			"resizeMode": "contain",
 			"backgroundColor": "#ffffff"
 		},
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
-			"supportsTablet": true,
-			"bundleIdentifier": "com.moalb.routineTactics"
+			"supportsTablet": true
 		},
 		"android": {
 			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
+				"foregroundImage": "./assets/images/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			}
 		},
+		"web": {
+			"bundler": "metro",
+			"output": "static",
+			"favicon": "./assets/images/favicon.png"
+		},
 		"plugins": ["expo-router"],
-		"extra": {
-			"router": {
-				"origin": false
-			}
+		"experiments": {
+			"typedRoutes": true
 		}
 	}
 }
