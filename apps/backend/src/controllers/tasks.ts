@@ -44,7 +44,7 @@ class TaskController {
 					title,
 					description,
 					labels,
-					dueDate,
+					dueDate: dueDate == null ? null : new Date(dueDate),
 					projectId,
 					createdById: user.uid,
 				},

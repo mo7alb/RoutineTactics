@@ -82,8 +82,9 @@ export default function TaskDetails() {
 					)}
 				</View>
 			</View>
+			<AssignTask task={data} />
+
 			<View style={{ maxHeight: "85%" }}>
-				<AssignTask task={data} />
 				<Comments comments={data.comments} taskId={data.id!} />
 			</View>
 			<Pressable
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 		marginRight: 10,
 		borderRadius: 10,
-		marginTop: 10,
+		// marginTop: 10,
 	},
 	btnCompleted: { backgroundColor: "green" },
 	btnText: { color: "white", textAlign: "center", fontSize: 16 },

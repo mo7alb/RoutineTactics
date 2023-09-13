@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 	},
 	wrapper: {
-		height: "63%",
+		maxHeight: "60%",
 	},
 	commentLeft: {
 		backgroundColor: "#008169",

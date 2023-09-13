@@ -5,8 +5,10 @@ import {
 	useRouter,
 	useSegments,
 } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AuthProvider, { useAuthContext } from "../context/authContext";
+import NetInfo from "@react-native-community/netinfo";
+import { View, Text } from "react-native";
 
 /**
  * A react component that authenticates users and redirects them to the correct page
@@ -37,6 +39,34 @@ const queryClient = new QueryClient();
  * @component
  */
 export default function RootLayout() {
+	const [connectedToNetwork, setConnectedToNetwork] = useState(false);
+
+	useEffect(() => {
+		const unsubscribe = NetInfo.addEventListener(state => {
+			setConnectedToNetwork(
+				state.isConnected == null ? false : state.isConnected
+			);
+		});
+
+		return () => {
+			unsubscribe();
+		};
+	}, []);
+
+	if (!connectedToNetwork)
+		return (
+			<View
+				style={{
+					display: "flex",
+					flex: 1,
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<Text>No internet connection</Text>
+			</View>
+		);
+
 	return (
 		<AuthProvider>
 			<QueryClientProvider client={queryClient}>

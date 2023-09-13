@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { Task } from "../../types/task";
@@ -20,21 +20,14 @@ type Props = {
  */
 export default function AssignTask({ task }: Props) {
 	const [selectedEmail, setSelectedEmail] = useState("");
-
-	useEffect(() => {
-		if (task.assignedToId != null) {
-			setSelectedEmail(
-				data.users.find((user: User) => user.uid === task.assignedToId)
-					.email
-			);
-		}
-	}, []);
+	const queryClient = useQueryClient();
 
 	const user = useAuthContext();
 
 	const mutation = useMutation({
 		mutationFn: (updatedTask: Task) =>
 			editTask(user!, task.id as string, updatedTask),
+		onSuccess: () => queryClient.invalidateQueries(["task", task.id]),
 	});
 
 	useEffect(() => {
@@ -52,6 +45,16 @@ export default function AssignTask({ task }: Props) {
 		queryKey: ["members"],
 		queryFn: () => getMembers(user!, task.projectId),
 	});
+
+	useEffect(() => {
+		if (data == undefined) return;
+		if (task.assignedToId != null) {
+			setSelectedEmail(
+				data.users.find((user: User) => user.uid === task.assignedToId)
+					.email
+			);
+		}
+	}, [data]);
 
 	if (!user) return null;
 	if (isLoading) return <Loading title="Task Details" />;
