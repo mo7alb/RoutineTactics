@@ -131,7 +131,12 @@ class ProjectController {
 				return response.sendStatus(400);
 			await prisma.project.update({
 				where: { id },
-				data: { name, description, dueDate, categories },
+				data: {
+					name,
+					description,
+					categories,
+					dueDate: dueDate != "" ? new Date(dueDate) : null,
+				},
 			});
 			return response.sendStatus(204);
 		} catch (error) {

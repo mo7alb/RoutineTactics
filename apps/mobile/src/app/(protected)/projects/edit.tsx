@@ -85,7 +85,7 @@ export default function EditProject() {
 		defaultValues: {
 			name: data.name,
 			description: data.description,
-			dueDate: data.dueDate,
+			dueDate: data.dueDate != null ? data.dueDate : "",
 		},
 	});
 

@@ -26,8 +26,10 @@ export default function DatePicker({ control, name }: Props) {
 				render={({ field: { onChange, value } }) => (
 					<DateTimePickerModal
 						isVisible={showDatePicker}
-						onChange={date => onChange(date.toDateString())}
-						onConfirm={() => setShowDatePicker(false)}
+						onConfirm={date => {
+							onChange(date.toDateString());
+							setShowDatePicker(false);
+						}}
 						onCancel={() => setShowDatePicker(false)}
 						date={value == "" ? new Date() : new Date(value)}
 					/>
